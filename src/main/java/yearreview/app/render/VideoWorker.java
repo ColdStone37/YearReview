@@ -5,7 +5,5 @@ package yearreview.app.render;
  * @author ColdStone37
  */
 public class VideoWorker {
- VideoWorker(){
-  
- }
+
 }
