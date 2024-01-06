@@ -1,5 +1,7 @@
 package yearreview.app.config;
 
+import java.awt.Color;
+
 /**
  * A class that stores general settings for the video.
  * TODO: Create seperate class in config that reads in the settings from an XML-File.
@@ -19,10 +21,10 @@ public abstract class GlobalSettings {
 	 * Stores the framerate of the video
 	 */
 	private static int videoFramerate = 60;
-	/**
-	 * Stores the number of threads to use for rendering
-	 */
-	private static int renderThreads = 2;
+
+	private static int superSampling = 1;
+
+	private static Color backgroundColor = Color.BLACK;
 
 	/**
 	 * Sets the output video resolution.
@@ -46,14 +48,12 @@ public abstract class GlobalSettings {
 		videoFramerate = framerate;
 	}
 
-	/**
-	 * Sets the number of threads to use for rendering.
-	 *
-	 * @param threads number of threads
-	 */
-	protected static void setRenderThreads(int threads) {
-		assert threads > 0;
-		renderThreads = threads;
+	protected static void setSupersampling(int quality) {
+		superSampling = quality;
+	}
+
+	protected static void setBackgroundColor(Color c) {
+		backgroundColor = c;
 	}
 
 	/**
@@ -83,12 +83,11 @@ public abstract class GlobalSettings {
 		return videoFramerate;
 	}
 
-	/**
-	 * Gets the number of threads to use when rendering the video.
-	 *
-	 * @return number of threads
-	 */
-	public static int getRenderThreads() {
-		return renderThreads;
+	public static int getSuperSampling() {
+		return superSampling;
+	}
+
+	public static Color getBackgroundColor() {
+		return backgroundColor;
 	}
 }
