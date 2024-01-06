@@ -17,7 +17,7 @@ public class VideoWorker {
 	private final OutputStream ffmpegInput;
 
 	public VideoWorker() {
-		String[] cmd = {"ffmpeg", "-f", "image2pipe", "-codec", "bmp", "-i", "pipe:0", "out.mp4"};
+		String[] cmd = {"ffmpeg", "-f", "image2pipe", "-codec", "png", "-i", "pipe:0", "out.mp4"};
 		Runtime rt = Runtime.getRuntime();
 		try {
 			ffmpeg = rt.exec(cmd);
@@ -29,7 +29,7 @@ public class VideoWorker {
 
 	public void writeFrame(BufferedImage image) {
 		try {
-			ImageIO.write(image, "BMP", ffmpegInput);
+			ImageIO.write(image, "PNG", ffmpegInput);
 		} catch (IOException e) {
 			throw new Error("IOException whilst piping image to ffmpeg.");
 		}
