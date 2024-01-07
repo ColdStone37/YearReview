@@ -10,20 +10,26 @@ import java.awt.Color;
  */
 public abstract class GlobalSettings {
 	/**
-	 * Stores the width of the video
+	 * Stores the width of the video. (Default: 1920)
 	 */
 	private static int videoWidth = 1920;
 	/**
-	 * Stores the height of the video
+	 * Stores the height of the video. (Default: 1080)
 	 */
 	private static int videoHeight = 1080;
 	/**
-	 * Stores the framerate of the video
+	 * Stores the framerate of the video. (Default: 60)
 	 */
 	private static int videoFramerate = 60;
 
+	/**
+	 * Resolution at which the frames will be rendered before downscaling. The render resolution will be videoWidth*superSampling x videoHeight*supersampling. 1 means no supersampling will be happening. (Default: 1)
+	 */
 	private static int superSampling = 1;
 
+	/**
+	 * Background of the video. (Default: {@link Color#BLACK})
+	 */
 	private static Color backgroundColor = Color.BLACK;
 
 	/**
@@ -48,10 +54,20 @@ public abstract class GlobalSettings {
 		videoFramerate = framerate;
 	}
 
+	/**
+	 * Sets the supersampling resolution of the video.
+	 *
+	 * @param quality quality of the supersampling
+	 */
 	protected static void setSupersampling(int quality) {
 		superSampling = quality;
 	}
 
+	/**
+	 * Sets the bacground color for the video.
+	 *
+	 * @param c background color
+	 */
 	protected static void setBackgroundColor(Color c) {
 		backgroundColor = c;
 	}
@@ -83,10 +99,20 @@ public abstract class GlobalSettings {
 		return videoFramerate;
 	}
 
+	/**
+	 * Gets the supersampling-resolution.
+	 *
+	 * @return quality of supersampling
+	 */
 	public static int getSuperSampling() {
 		return superSampling;
 	}
 
+	/**
+	 * Gets the background-color of the video.
+	 *
+	 * @return background-color
+	 */
 	public static Color getBackgroundColor() {
 		return backgroundColor;
 	}
