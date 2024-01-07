@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"yearreview.app"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"yearreview.app"},{"l":"yearreview.app.config"},{"l":"yearreview.app.render"}];updateSearchResults();
