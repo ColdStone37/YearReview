@@ -33,6 +33,11 @@ public abstract class GlobalSettings {
 	private static Color backgroundColor = Color.BLACK;
 
 	/**
+	 * Radius of the corners of the {@link yearreview.app.grid.segments.GridSegment GridSegments}.
+	 */
+	private static float cornerRadius = 10;
+
+	/**
 	 * Sets the output video resolution.
 	 *
 	 * @param width  width of the video
@@ -64,12 +69,21 @@ public abstract class GlobalSettings {
 	}
 
 	/**
-	 * Sets the bacground color for the video.
+	 * Sets the background color for the video.
 	 *
 	 * @param c background color
 	 */
 	protected static void setBackgroundColor(Color c) {
 		backgroundColor = c;
+	}
+
+	/**
+	 * Sets the corner radius of the {@link yearreview.app.grid.segments.GridSegment GridSegments}.
+	 *
+	 * @param r radius of the corners in pixels
+	 */
+	protected static void setCornerRadius(float r) {
+		cornerRadius = r;
 	}
 
 	/**
@@ -115,5 +129,14 @@ public abstract class GlobalSettings {
 	 */
 	public static Color getBackgroundColor() {
 		return backgroundColor;
+	}
+
+	/**
+	 * Gets the corner radius of the {@link yearreview.app.grid.segments.GridSegment GridSegements} automatically scaled by the supersapling resolution.
+	 *
+	 * @return scaled corner radius
+	 */
+	public static float getScaledCornerRadius() {
+		return cornerRadius * (float) superSampling;
 	}
 }
