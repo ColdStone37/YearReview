@@ -33,9 +33,19 @@ public abstract class GlobalSettings {
 	private static Color backgroundColor = Color.BLACK;
 
 	/**
-	 * Radius of the corners of the {@link yearreview.app.grid.segments.GridSegment GridSegments}.
+	 * Radius of the corners of the {@link yearreview.app.grid.segments.GridSegment GridSegments}. (Default: 10f)
 	 */
-	private static float cornerRadius = 10;
+	private static float cornerRadius = 10f;
+
+	/**
+	 * Width of the grid used for placing the {@link yearreview.app.grid.segments.GridSegment segments}. (Default: 16)
+	 */
+	private static int gridWidth = 16;
+
+	/**
+	 * Height of the grid used for placing the {@link yearreview.app.grid.segments.GridSegment segments}. (Default: 9)
+	 */
+	private static int gridHeight = 9;
 
 	/**
 	 * Sets the output video resolution.
@@ -84,6 +94,14 @@ public abstract class GlobalSettings {
 	 */
 	protected static void setCornerRadius(float r) {
 		cornerRadius = r;
+	}
+
+	/**
+	 * Sets the size of the grid used for placing the {@link yearreview.app.grid.segments.GridSegment GridSegments} by the {@link yearreview.app.grid.GridManager manager}.
+	 */
+	protected static void setGridSize(int w, int h) {
+		gridWidth = w;
+		gridHeight = h;
 	}
 
 	/**
@@ -138,5 +156,19 @@ public abstract class GlobalSettings {
 	 */
 	public static float getScaledCornerRadius() {
 		return cornerRadius * (float) superSampling;
+	}
+
+	/**
+	 * Gets the width of the grid used for placing the {@link yearreview.app.grid.segments.GridSegment GridSegements}.
+	 */
+	public static int getGridWidth() {
+		return gridWidth;
+	}
+
+	/**
+	 * Gets the height of the grid used for placing the {@link yearreview.app.grid.segments.GridSegment GridSegements}.
+	 */
+	public static int getGridHeight() {
+		return gridHeight;
 	}
 }
