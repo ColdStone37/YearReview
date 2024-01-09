@@ -108,6 +108,25 @@ public abstract class GlobalSettings {
 	}
 
 	/**
+	 * Gets the width of the render target-resolution. (meaning videoWidth * supersampling)
+	 *
+	 * @return width of the render
+	 */
+
+	public static int getRenderWidth() {
+		return videoWidth * superSampling;
+	}
+
+	/**
+	 * Gets the height of the render target-resolution. (meaning videoHeight * supersampling)
+	 *
+	 * @return height of the render
+	 */
+	public static int getRenderHeight() {
+		return videoHeight * superSampling;
+	}
+
+	/**
 	 * Gets the pixel-width of the output video.
 	 *
 	 * @return pixel-width

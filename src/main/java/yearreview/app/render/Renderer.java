@@ -34,8 +34,8 @@ public class Renderer {
 	 * Default Constructor for a Renderer.
 	 */
 	public Renderer() {
-		renderWidth = GlobalSettings.getVideoWidth() * GlobalSettings.getSuperSampling();
-		renderHeight = GlobalSettings.getVideoHeight() * GlobalSettings.getSuperSampling();
+		renderWidth = GlobalSettings.getRenderWidth();
+		renderHeight = GlobalSettings.getRenderHeight();
 		renderingSurface = new BufferedImage(renderWidth, renderHeight, BufferedImage.TYPE_3BYTE_BGR);
 		graphics = renderingSurface.createGraphics();
 		graphics.setBackground(GlobalSettings.getBackgroundColor());
