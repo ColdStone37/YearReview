@@ -45,7 +45,7 @@ public class Renderer {
 	 */
 	public void renderVideo() {
 		VideoWorker v = new VideoWorker();
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 5000; i++) {
 			renderFrame(i);
 			v.writeFrame(renderingSurface);
 		}
@@ -59,6 +59,7 @@ public class Renderer {
 	 */
 	private void renderFrame(int frameIndex) {
 		drawBackground();
+		graphics.fillRect(frameIndex % renderWidth, frameIndex % renderHeight, 50, 50);
 	}
 
 	/**
