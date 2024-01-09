@@ -11,7 +11,7 @@ import java.awt.geom.RoundRectangle2D;
  * Abstract class that defines Methods that need to be implemented in every Segment
  */
 public abstract class GridSegment {
-	private final float x, y;
+	private float x, y;
 	protected final float w, h;
 	private final RoundRectangle2D.Float clipShape;
 
@@ -26,13 +26,20 @@ public abstract class GridSegment {
 		clipShape = new RoundRectangle2D.Float(0, 0, w, h, GlobalSettings.getScaledCornerRadius(), GlobalSettings.getScaledCornerRadius());
 	}
 
+	public final void setPosition(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	public final void renderGlobalSpace(Graphics2D graphic) {
 		AffineTransform prevTransform = graphic.getTransform();
+		Shape prevClip = graphic.getClip();
 		graphic.translate(x, y);
 		graphic.clip(clipShape);
 		renderLocalSpace(graphic);
 		graphic.setTransform(prevTransform);
+		graphic.setClip(prevClip);
 	}
 
-	public abstract void renderLocalSpace(Graphics2D graphic);
+	protected abstract void renderLocalSpace(Graphics2D graphic);
 }
