@@ -1,6 +1,7 @@
 package yearreview.app.render;
 
 import yearreview.app.config.GlobalSettings;
+import yearreview.app.grid.segments.TestSegment;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -45,7 +46,7 @@ public class Renderer {
 	 */
 	public void renderVideo() {
 		VideoWorker v = new VideoWorker();
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < 500; i++) {
 			renderFrame(i);
 			v.writeFrame(renderingSurface);
 		}
@@ -59,7 +60,13 @@ public class Renderer {
 	 */
 	private void renderFrame(int frameIndex) {
 		drawBackground();
+
 		graphics.fillRect(frameIndex % renderWidth, frameIndex % renderHeight, 50, 50);
+		TestSegment t1 = new TestSegment(10, 10, 200, 200);
+		TestSegment t2 = new TestSegment(220, 0, 200, 1080);
+		t1.setPosition(10, frameIndex + 10);
+		t1.renderGlobalSpace(graphics);
+		t2.renderGlobalSpace(graphics);
 	}
 
 	/**
