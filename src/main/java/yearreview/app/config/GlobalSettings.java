@@ -98,6 +98,9 @@ public abstract class GlobalSettings {
 
 	/**
 	 * Sets the size of the grid used for placing the {@link yearreview.app.grid.segments.GridSegment GridSegments} by the {@link yearreview.app.grid.GridManager manager}.
+	 *
+	 * @param w width of the grid
+	 * @param h height of the grid
 	 */
 	protected static void setGridSize(int w, int h) {
 		gridWidth = w;
@@ -160,6 +163,8 @@ public abstract class GlobalSettings {
 
 	/**
 	 * Gets the width of the grid used for placing the {@link yearreview.app.grid.segments.GridSegment GridSegements}.
+	 *
+	 * @return width of the grid
 	 */
 	public static int getGridWidth() {
 		return gridWidth;
@@ -167,6 +172,8 @@ public abstract class GlobalSettings {
 
 	/**
 	 * Gets the height of the grid used for placing the {@link yearreview.app.grid.segments.GridSegment GridSegements}.
+	 *
+	 * @return height of the grid
 	 */
 	public static int getGridHeight() {
 		return gridHeight;
