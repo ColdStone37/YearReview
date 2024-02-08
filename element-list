@@ -1,3 +1,5 @@
 yearreview.app
 yearreview.app.config
+yearreview.app.grid
+yearreview.app.grid.widgets
 yearreview.app.render
