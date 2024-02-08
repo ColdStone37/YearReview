@@ -16,6 +16,9 @@ public class ConfigParser {
 
 	public final static String XML_VERSION = "0.1";
 
+	private ConfigNode widgets;
+	private ConfigNode dataSources;
+
 	public ConfigParser(String[] args) {
 		Options options = new Options();
 
@@ -65,19 +68,21 @@ public class ConfigParser {
 
 			root.assertChildNodesExist("Settings", "DataSources", "Widgets");
 			ConfigNode settings = root.getChildByName("Settings");
-			ConfigNode dataSources = root.getChildByName("DataSources");
-			ConfigNode widgets = root.getChildByName("Widgets");
+			dataSources = root.getChildByName("DataSources");
+			widgets = root.getChildByName("Widgets");
 
 			parseSettings(settings);
-
-			GridManager gm = new GridManager(widgets);
-
-			Renderer r = new Renderer(gm);
-
-			r.renderVideo();
 		} catch (Exception e) {
 			throw new Error(e);
 		}
+	}
+
+	public ConfigNode getWidgetSettings() {
+		return widgets;
+	}
+
+	public ConfigNode getDataSourcesSettings() {
+		return dataSources;
 	}
 
 	private void parseSettings(ConfigNode settings) {
