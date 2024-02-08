@@ -1,7 +1,7 @@
 package yearreview.app.render;
 
 import yearreview.app.config.GlobalSettings;
-import yearreview.app.grid.segments.TestSegment;
+import yearreview.app.grid.widgets.TestWidget;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -62,8 +62,8 @@ public class Renderer {
 		drawBackground();
 
 		graphics.fillRect(frameIndex % renderWidth, frameIndex % renderHeight, 50, 50);
-		TestSegment t1 = new TestSegment(10, 10, 200, 200);
-		TestSegment t2 = new TestSegment(220, 0, 200, 1080);
+		TestWidget t1 = new TestWidget(10, 10, 200, 200);
+		TestWidget t2 = new TestWidget(220, 0, 200, 1080);
 		t1.setPosition(10, frameIndex + 10);
 		t1.renderGlobalSpace(graphics);
 		t2.renderGlobalSpace(graphics);

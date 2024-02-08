@@ -1,4 +1,4 @@
-package yearreview.app.grid.segments;
+package yearreview.app.grid.widgets;
 
 import yearreview.app.config.GlobalSettings;
 
@@ -10,7 +10,7 @@ import java.awt.geom.RoundRectangle2D;
 /**
  * Abstract class that defines Methods that need to be implemented in every Segment
  */
-public abstract class GridSegment {
+public abstract class Widget {
 	private float x, y;
 	protected final float w, h;
 	private final RoundRectangle2D.Float clipShape;
@@ -18,7 +18,7 @@ public abstract class GridSegment {
 	/**
 	 * Constructor for a GridSegment that initializes the position of the segment and the Shape for the {@link Graphics2D#clip}-function.
 	 */
-	public GridSegment(float x, float y, float w, float h) {
+	public Widget(float x, float y, float w, float h) {
 		this.x = x;
 		this.y = y;
 		this.w = w;

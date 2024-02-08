@@ -1,12 +1,12 @@
-package yearreview.app.grid.segments;
+package yearreview.app.grid.widgets;
 
 import yearreview.app.config.GlobalSettings;
 
 import java.awt.*;
 
-public class TestSegment extends GridSegment {
+public class TestWidget extends Widget {
 
-	public TestSegment(float x, float y, float w, float h) {
+	public TestWidget(float x, float y, float w, float h) {
 		super(x * GlobalSettings.getSuperSampling(), y * GlobalSettings.getSuperSampling(), w * GlobalSettings.getSuperSampling(), h * GlobalSettings.getSuperSampling());
 	}
 
