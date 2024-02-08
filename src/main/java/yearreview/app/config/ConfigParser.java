@@ -1,18 +1,58 @@
 package yearreview.app.config;
 
 import org.w3c.dom.*;
-import sun.security.krb5.Config;
+import org.apache.commons.cli.*;
+import org.apache.commons.cli.ParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.time.Instant;
 
+import yearreview.app.grid.GridManager;
+import yearreview.app.render.Renderer;
+
 public class ConfigParser {
 
 	public final static String XML_VERSION = "0.1";
 
-	public ConfigParser(File f) {
+	public ConfigParser(String[] args) {
+		Options options = new Options();
+
+		Option config = new Option("c", "config", true, "config file path");
+		config.setRequired(true);
+		options.addOption(config);
+
+		Option output = new Option("o", "output", true, "output file name");
+		options.addOption(output);
+
+		Option delete = new Option("d", "delete", false, "deletes file with same name as output if exists");
+		options.addOption(delete);
+
+		CommandLineParser parser = new DefaultParser();
+		HelpFormatter formatter = new HelpFormatter();
+
+		try {
+			CommandLine cmd = parser.parse(options, args);
+			if (cmd.hasOption("output"))
+				GlobalSettings.setOutputFilename(cmd.getOptionValue("output"));
+			File f = new File(GlobalSettings.getOutputFilename());
+			if (cmd.hasOption("delete")) {
+				if (f.isFile())
+					f.delete();
+			}
+			if (f.isFile())
+				throw new Error("Output file does already exists. Either change output name or add -d flag to automatically delete it.");
+			parseConfigFile(new File(cmd.getOptionValue("config")));
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
+			formatter.printHelp("utility-name", options);
+
+			System.exit(1);
+		}
+	}
+
+	private void parseConfigFile(File f) {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(f);
@@ -29,6 +69,12 @@ public class ConfigParser {
 			ConfigNode widgets = root.getChildByName("Widgets");
 
 			parseSettings(settings);
+
+			GridManager gm = new GridManager(widgets);
+
+			Renderer r = new Renderer(gm);
+
+			r.renderVideo();
 		} catch (Exception e) {
 			throw new Error(e);
 		}
@@ -54,7 +100,11 @@ public class ConfigParser {
 			if (grid.hasChild("Width"))
 				GlobalSettings.setGridWidth(Integer.parseInt(grid.getChildContent("Width")));
 			if (grid.hasChild("Height"))
-				GlobalSettings.setGridWidth(Integer.parseInt(grid.getChildContent("Height")));
+				GlobalSettings.setGridHeight(Integer.parseInt(grid.getChildContent("Height")));
+			if (grid.hasChild("InnerSpacing"))
+				GlobalSettings.setGridInnerSpacing(Integer.parseInt(grid.getChildContent("InnerSpacing")));
+			if (grid.hasChild("OuterSpacing"))
+				GlobalSettings.setGridOuterSpacing(Integer.parseInt(grid.getChildContent("OuterSpacing")));
 		}
 	}
 }

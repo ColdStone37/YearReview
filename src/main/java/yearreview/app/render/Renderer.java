@@ -1,10 +1,12 @@
 package yearreview.app.render;
 
 import yearreview.app.config.GlobalSettings;
-import yearreview.app.grid.widgets.TestWidget;
+import yearreview.app.grid.GridManager;
+import yearreview.app.grid.widgets.Widget;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.time.Instant;
 
 /**
  * A class that manages the renderprocess by generating the frames and passing them to a {@link VideoWorker}.
@@ -30,15 +32,18 @@ public class Renderer {
 	 */
 	private final Graphics2D graphics;
 
+	private final GridManager grid;
+
 	/**
 	 * Default Constructor for a Renderer.
 	 */
-	public Renderer() {
+	public Renderer(GridManager grid) {
 		renderWidth = GlobalSettings.getRenderWidth();
 		renderHeight = GlobalSettings.getRenderHeight();
 		renderingSurface = new BufferedImage(renderWidth, renderHeight, BufferedImage.TYPE_3BYTE_BGR);
 		graphics = renderingSurface.createGraphics();
 		graphics.setBackground(GlobalSettings.getBackgroundColor());
+		this.grid = grid;
 	}
 
 	/**
@@ -46,7 +51,7 @@ public class Renderer {
 	 */
 	public void renderVideo() {
 		VideoWorker v = new VideoWorker();
-		for (int i = 0; i < 500; i++) {
+		for (int i = 0; i < 100; i++) {
 			renderFrame(i);
 			v.writeFrame(renderingSurface);
 		}
@@ -61,12 +66,8 @@ public class Renderer {
 	private void renderFrame(int frameIndex) {
 		drawBackground();
 
-		graphics.fillRect(frameIndex % renderWidth, frameIndex % renderHeight, 50, 50);
-		TestWidget t1 = new TestWidget(10, 10, 200, 200);
-		TestWidget t2 = new TestWidget(220, 0, 200, 1080);
-		t1.setPosition(10, frameIndex + 10);
-		t1.renderGlobalSpace(graphics);
-		t2.renderGlobalSpace(graphics);
+		for (Widget w : grid)
+			w.renderGlobalSpace(graphics, Instant.EPOCH);
 	}
 
 	/**

@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 
+import java.time.Instant;
 
 /**
  * Abstract class that defines Methods that need to be implemented in every Segment
@@ -31,15 +32,15 @@ public abstract class Widget {
 		this.y = y;
 	}
 
-	public final void renderGlobalSpace(Graphics2D graphic) {
+	public final void renderGlobalSpace(Graphics2D graphic, Instant time) {
 		AffineTransform prevTransform = graphic.getTransform();
 		Shape prevClip = graphic.getClip();
 		graphic.translate(x, y);
 		graphic.clip(clipShape);
-		renderLocalSpace(graphic);
+		renderLocalSpace(graphic, time);
 		graphic.setTransform(prevTransform);
 		graphic.setClip(prevClip);
 	}
 
-	protected abstract void renderLocalSpace(Graphics2D graphic);
+	protected abstract void renderLocalSpace(Graphics2D graphic, Instant time);
 }

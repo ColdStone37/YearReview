@@ -11,6 +11,10 @@ import java.time.Instant;
  */
 public abstract class GlobalSettings {
 	/**
+	 * Strores the name of the output video file. (Default: out.mp4)
+	 */
+	private static String outputFilename = "out.mp4";
+	/**
 	 * Stores the width of the video. (Default: 1920)
 	 */
 	private static int videoWidth = 1920;
@@ -55,6 +59,25 @@ public abstract class GlobalSettings {
 	 * Height of the grid used for placing the {@link yearreview.app.grid.widgets.Widget widgets}. (Default: 9)
 	 */
 	private static int gridHeight = 9;
+
+	/**
+	 * Spacing in pixels between two {@link yearreview.app.grid.widgets.Widget widgets} next to each other. (Default: 10)
+	 */
+	private static int gridInnerSpacing = 10;
+
+	/**
+	 * Spacing in pixels between the {@link yearreview.app.grid.widgets.Widget widgets} and the border of the video. (Default: 15)
+	 */
+	private static int gridOuterSpacing = 15;
+
+	/**
+	 * Sets the name of the output file.
+	 *
+	 * @param filename name that is used for the video file
+	 */
+	protected static void setOutputFilename(String filename) {
+		outputFilename = filename;
+	}
 
 	/**
 	 * Sets the output video resolution.
@@ -176,6 +199,35 @@ public abstract class GlobalSettings {
 	}
 
 	/**
+	 * Sets the inner spacing between two {@link yearreview.app.grid.widgets.Widget widgets}.
+	 *
+	 * @param spacing spacing in pixels
+	 */
+	protected static void setGridInnerSpacing(int spacing) {
+		assert spacing >= 0;
+		gridInnerSpacing = spacing;
+	}
+
+	/**
+	 * Sets the outer spacing between the {@link yearreview.app.grid.widgets.Widget widgets} and the border of the video.
+	 *
+	 * @param spacing spacing in pixels
+	 */
+	protected static void setGridOuterSpacing(int spacing) {
+		assert spacing >= 0;
+		gridOuterSpacing = spacing;
+	}
+
+	/**
+	 * Gets the name of the output file of the video.
+	 *
+	 * @return name to be used for the output file
+	 */
+	public static String getOutputFilename() {
+		return outputFilename;
+	}
+
+	/**
 	 * Gets the width of the render target-resolution. (meaning videoWidth * supersampling)
 	 *
 	 * @return width of the render
@@ -282,5 +334,23 @@ public abstract class GlobalSettings {
 	 */
 	public static int getGridHeight() {
 		return gridHeight;
+	}
+
+	/**
+	 * Gets the scaled spacing between two {@link yearreview.app.grid.widgets.Widget widgets}.
+	 *
+	 * @return spacing in pixels
+	 */
+	public static int getScaledGridInnerSpacing() {
+		return gridInnerSpacing * superSampling;
+	}
+
+	/**
+	 * Gets the scaled spacing between {@link yearreview.app.grid.widgets.Widget widgets} and the border of the video.
+	 *
+	 * @return spacing in pixels
+	 */
+	public static int getScaledGridOuterSpacing() {
+		return gridOuterSpacing * superSampling;
 	}
 }
