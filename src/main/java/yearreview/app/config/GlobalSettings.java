@@ -69,6 +69,26 @@ public abstract class GlobalSettings {
 	}
 
 	/**
+	 * Sets the output video width.
+	 *
+	 * @param width width of the video
+	 */
+	protected static void setVideoWidth(int width) {
+		assert width > 0;
+		videoWidth = width;
+	}
+
+	/**
+	 * Sets the output video height.
+	 *
+	 * @param height height of the video
+	 */
+	protected static void setVideoHeight(int height) {
+		assert height > 0;
+		videoHeight = height;
+	}
+
+	/**
 	 * Sets the framerate of the output video.
 	 *
 	 * @param framerate framerate to use for the video
@@ -126,12 +146,33 @@ public abstract class GlobalSettings {
 	/**
 	 * Sets the size of the grid used for placing the {@link yearreview.app.grid.widgets.Widget widgets} by the {@link yearreview.app.grid.GridManager manager}.
 	 *
-	 * @param w width of the grid
-	 * @param h height of the grid
+	 * @param width  width of the grid
+	 * @param height height of the grid
 	 */
-	protected static void setGridSize(int w, int h) {
-		gridWidth = w;
-		gridHeight = h;
+	protected static void setGridSize(int width, int height) {
+		assert width > 0 && height > 0;
+		gridWidth = width;
+		gridHeight = height;
+	}
+
+	/**
+	 * Sets the width of the grid used for placing the {@link yearreview.app.grid.widgets.Widget widgets} by the {@link yearreview.app.grid.GridManager manager}.
+	 *
+	 * @param width width of the grid
+	 */
+	protected static void setGridWidth(int width) {
+		assert width > 0;
+		gridWidth = width;
+	}
+
+	/**
+	 * Sets the height of the grid used for placing the {@link yearreview.app.grid.widgets.Widget widgets} by the {@link yearreview.app.grid.GridManager manager}.
+	 *
+	 * @param height height of the grid
+	 */
+	protected static void setGridHeight(int height) {
+		assert height > 0;
+		gridHeight = height;
 	}
 
 	/**
