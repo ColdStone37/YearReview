@@ -5,7 +5,6 @@ import java.time.Instant;
 
 /**
  * A class that stores general settings for the video.
- * TODO: Create seperate class in config that reads in the settings from an XML-File.
  *
  * @author ColdStone37
  */

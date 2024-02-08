@@ -5,9 +5,6 @@ import yearreview.app.config.GlobalSettings;
 import yearreview.app.grid.widgets.Widget;
 import yearreview.app.grid.widgets.WidgetFactory;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-
 import java.util.*;
 
 /**
@@ -16,15 +13,30 @@ import java.util.*;
  * @author ColdStone37
  */
 public class GridManager implements Iterable<Widget> {
-
-	private final float xScale, yScale;
-
+	/**
+	 * Horizontal scale used to position the nodes.
+	 **/
+	private final float xScale;
+	/**
+	 * Vertical scale used to position the nodes.
+	 */
+	private final float yScale;
+	/**
+	 * A List of all Widgets managed by this {@link GridManager}.
+	 */
 	private final List<Widget> widgets;
 
+	/**
+	 * Constructs a {@link GridManager} from a given configuration.
+	 *
+	 * @param gridConfig confguration of the grid
+	 */
 	public GridManager(ConfigNode gridConfig) {
+		// Calculate scaling values
 		xScale = ((float) GlobalSettings.getRenderWidth() - GlobalSettings.getScaledGridOuterSpacing() * 2f + (float) GlobalSettings.getScaledGridInnerSpacing()) / (float) GlobalSettings.getGridWidth();
 		yScale = ((float) GlobalSettings.getRenderHeight() - GlobalSettings.getScaledGridOuterSpacing() * 2f + (float) GlobalSettings.getScaledGridInnerSpacing()) / (float) GlobalSettings.getGridHeight();
 
+		// Creating the widgets
 		widgets = new ArrayList<Widget>();
 		for (ConfigNode widgetConfig : gridConfig) {
 			widgetConfig.assertAttributesExist("x", "y", "w", "h");
@@ -33,24 +45,38 @@ public class GridManager implements Iterable<Widget> {
 			int w = Integer.parseInt(widgetConfig.getAttributeByName("w"));
 			int h = Integer.parseInt(widgetConfig.getAttributeByName("h"));
 
+			// Transform the position from grid space to screen space
 			WidgetPosition wPos = transform(x, y, w, h);
 
+			// Add the widget
 			widgets.add(WidgetFactory.getWidget(wPos.x, wPos.y, wPos.w, wPos.h, widgetConfig));
 		}
 	}
 
-	private WidgetPosition transform(int x_i, int y_i, int w_i, int h_i) {
-		float x = x_i * xScale;
-		float y = y_i * yScale;
-		float w = (x_i + w_i) * xScale - x - GlobalSettings.getScaledGridInnerSpacing();
-		float h = (y_i + h_i) * yScale - y - GlobalSettings.getScaledGridInnerSpacing();
+	/**
+	 * Transforms widget coordinates from grid space to screen space.
+	 *
+	 * @param x x-position of the widget in grid space
+	 * @param y y-position of the widget in grid space
+	 * @param w width of the widget in grid space
+	 * @param h height of the widet in grid space
+	 * @return new dimensions bundeled in {@link WidgetPosition}-object
+	 */
+	private WidgetPosition transform(int x, int y, int w, int h) {
+		float x_f = x * xScale;
+		float y_f = y * yScale;
+		float w_f = (x + w) * xScale - x_f - GlobalSettings.getScaledGridInnerSpacing();
+		float h_f = (y + h) * yScale - y_f - GlobalSettings.getScaledGridInnerSpacing();
 
-		x += GlobalSettings.getScaledGridOuterSpacing();
-		y += GlobalSettings.getScaledGridOuterSpacing();
+		x_f += GlobalSettings.getScaledGridOuterSpacing();
+		y_f += GlobalSettings.getScaledGridOuterSpacing();
 
-		return new WidgetPosition(x, y, w, h);
+		return new WidgetPosition(x_f, y_f, w_f, h_f);
 	}
 
+	/**
+	 * Class to store the dimensions of a widget in screen space.
+	 */
 	private static class WidgetPosition {
 		final float x, y, w, h;
 
@@ -62,6 +88,11 @@ public class GridManager implements Iterable<Widget> {
 		}
 	}
 
+	/**
+	 * Gets an iterator for the widgets contained in the manager.
+	 *
+	 * @return iterator over all widgets
+	 */
 	@Override
 	public Iterator<Widget> iterator() {
 		return widgets.iterator();

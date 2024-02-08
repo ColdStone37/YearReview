@@ -9,17 +9,32 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.time.Instant;
 
-import yearreview.app.grid.GridManager;
-import yearreview.app.render.Renderer;
-
+/**
+ * Parser for the command line arguments and the configuration file.
+ *
+ * @author ColdStone37
+ */
 public class ConfigParser {
-
+	/**
+	 * Version of the configuration.
+	 **/
 	public final static String XML_VERSION = "0.1";
-
+	/**
+	 * Configuration for the widgets.
+	 */
 	private ConfigNode widgets;
+	/**
+	 * Configuration for the data sources.
+	 */
 	private ConfigNode dataSources;
 
+	/**
+	 * Constructs a ConfigParser and parses the arguments and config file.
+	 *
+	 * @param args command line arguments
+	 */
 	public ConfigParser(String[] args) {
+		// Add command line options
 		Options options = new Options();
 
 		Option config = new Option("c", "config", true, "config file path");
@@ -32,29 +47,49 @@ public class ConfigParser {
 		Option delete = new Option("d", "delete", false, "deletes file with same name as output if exists");
 		options.addOption(delete);
 
-		CommandLineParser parser = new DefaultParser();
+		Option help = new Option("h", "help", false, "Prints this menu");
+		options.addOption(help);
+
 		HelpFormatter formatter = new HelpFormatter();
 
 		try {
+			// Parse the arguments
+			CommandLineParser parser = new DefaultParser();
 			CommandLine cmd = parser.parse(options, args);
+
+			if (cmd.hasOption("help")) {
+				formatter.printHelp("set the configuration file with the -c option, all other arguments are optional", options);
+				System.exit(0);
+			}
+
 			if (cmd.hasOption("output"))
 				GlobalSettings.setOutputFilename(cmd.getOptionValue("output"));
+
 			File f = new File(GlobalSettings.getOutputFilename());
-			if (cmd.hasOption("delete")) {
-				if (f.isFile())
-					f.delete();
-			}
+
+			// Delete the video file if it already exists and the -d flag is set
+			if (cmd.hasOption("delete") && f.isFile())
+				f.delete();
+
+			// ffmpeg doesn't like it when the file already exists
 			if (f.isFile())
 				throw new Error("Output file does already exists. Either change output name or add -d flag to automatically delete it.");
+
+			// Parse the Config file
 			parseConfigFile(new File(cmd.getOptionValue("config")));
 		} catch (ParseException e) {
+			// If the arguments couldn't be parsed throw Error and show help
 			System.out.println(e.getMessage());
-			formatter.printHelp("utility-name", options);
-
+			formatter.printHelp("set the configuration file with the -c option, all other arguments are optional", options);
 			System.exit(1);
 		}
 	}
 
+	/**
+	 * Parses the configuration file specified in the command line arguments.
+	 *
+	 * @param f configuration file to parse
+	 */
 	private void parseConfigFile(File f) {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -62,11 +97,14 @@ public class ConfigParser {
 			doc.getDocumentElement().normalize();
 			ConfigNode root = new ConfigNode(doc.getElementsByTagName("Configuration").item(0));
 
-			// test for correct version
+			// Test for correct version
 			if (!root.getAttributeByName("version").equals(XML_VERSION))
 				throw new Error("XML-version does not match project version.");
 
+			// Make sure the needed Children exist
 			root.assertChildNodesExist("Settings", "DataSources", "Widgets");
+
+			// Get the children
 			ConfigNode settings = root.getChildByName("Settings");
 			dataSources = root.getChildByName("DataSources");
 			widgets = root.getChildByName("Widgets");
@@ -77,14 +115,29 @@ public class ConfigParser {
 		}
 	}
 
+	/**
+	 * Gets the configuration for the {@link yearreview.app.grid.widgets.Widget widgets}.
+	 *
+	 * @return configuration
+	 */
 	public ConfigNode getWidgetSettings() {
 		return widgets;
 	}
 
+	/**
+	 * Gets the configuration for the data sources.
+	 *
+	 * @return configuration
+	 */
 	public ConfigNode getDataSourcesSettings() {
 		return dataSources;
 	}
 
+	/**
+	 * Parses the settings part of the configuration file.
+	 *
+	 * @param settings configuration node containing the settings
+	 */
 	private void parseSettings(ConfigNode settings) {
 		settings.assertChildNodesExist("Start", "End");
 		GlobalSettings.setVideoStart(Instant.parse(settings.getChildContent("Start")));

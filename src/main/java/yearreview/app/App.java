@@ -4,14 +4,12 @@ import yearreview.app.grid.GridManager;
 import yearreview.app.render.Renderer;
 import yearreview.app.config.ConfigParser;
 
-import java.io.File;
-
 /**
- * Hello world!
+ * Main Application
  */
 public class App {
 	/**
-	 * Default main function.
+	 * Renders the video.
 	 */
 	public static void main(String[] args) {
 		ConfigParser c = new ConfigParser(args);
