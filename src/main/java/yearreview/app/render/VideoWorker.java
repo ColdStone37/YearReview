@@ -26,7 +26,7 @@ public class VideoWorker {
 	 * Default Constructor for a VideoWorker that starts the ffmpeg-subprocess.
 	 */
 	public VideoWorker() {
-		String[] cmd = {"ffmpeg", "-r", "" + GlobalSettings.getVideoFramerate(), "-s", GlobalSettings.getVideoWidth() + "x" + GlobalSettings.getVideoHeight(), "-vcodec", "rawvideo", "-f", "rawvideo", "-pix_fmt", "bgr24", "-i", "pipe:0", "-r", "60", "out.mp4"};
+		String[] cmd = {"ffmpeg", "-r", "" + GlobalSettings.getVideoFramerate(), "-s", GlobalSettings.getVideoWidth() * GlobalSettings.getSuperSampling() + "x" + GlobalSettings.getVideoHeight() * GlobalSettings.getSuperSampling(), "-vcodec", "rawvideo", "-f", "rawvideo", "-pix_fmt", "bgr24", "-i", "pipe:0", "-vf", "scale=" + GlobalSettings.getVideoWidth() + ":-1", "-r", "60", GlobalSettings.getOutputFilename()};
 		Runtime rt = Runtime.getRuntime();
 		try {
 			ffmpeg = rt.exec(cmd);
