@@ -76,7 +76,7 @@ public class ConfigParser {
 				throw new Error("Output file does already exists. Either change output name or add -d flag to automatically delete it.");
 
 			// Parse the Config file
-			parseConfigFile(new File(cmd.getOptionValue("config")));
+			parseConfigFile(cmd.getOptionValue("config"));
 		} catch (ParseException e) {
 			// If the arguments couldn't be parsed throw Error and show help
 			System.out.println(e.getMessage());
@@ -88,9 +88,11 @@ public class ConfigParser {
 	/**
 	 * Parses the configuration file specified in the command line arguments.
 	 *
-	 * @param f configuration file to parse
+	 * @param file configuration file to parse
 	 */
-	private void parseConfigFile(File f) {
+	private void parseConfigFile(String file) {
+		GlobalSettings.setInputFilename(file);
+		File f = new File(file);
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(f);

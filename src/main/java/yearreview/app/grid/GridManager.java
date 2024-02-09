@@ -49,7 +49,10 @@ public class GridManager implements Iterable<Widget> {
 			WidgetPosition wPos = transform(x, y, w, h);
 
 			// Add the widget
-			widgets.add(WidgetFactory.getWidget(wPos.x, wPos.y, wPos.w, wPos.h, widgetConfig));
+			Widget newWidget = WidgetFactory.getWidget(wPos.x, wPos.y, wPos.w, wPos.h, widgetConfig);
+			if (newWidget == null)
+				throw new Error("Widget " + widgetConfig.getName() + " isn't valid.");
+			widgets.add(newWidget);
 		}
 	}
 
