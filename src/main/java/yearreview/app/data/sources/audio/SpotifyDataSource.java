@@ -11,19 +11,30 @@ import org.apache.hc.core5.http.ParseException;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
 import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
+import yearreview.app.data.sources.audio.general.AudioDatabase;
+import yearreview.app.data.sources.audio.general.AudioPiece;
+import yearreview.app.data.sources.audio.general.Song;
 
 import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
 
 public class SpotifyDataSource extends DataSource {
 	private String dataFolder;
 	private ClientCredentials credentials;
 	private SpotifyApi api;
 
+	private final static int MAX_REQUEST_BATCH = 50;
+
+	private final AudioDatabase database;
+
 	public SpotifyDataSource(ConfigNode config) {
 		super(config);
+		database = new AudioDatabase();
 	}
 
 	@Override
@@ -72,11 +83,12 @@ public class SpotifyDataSource extends DataSource {
 			String keyValue = "";
 			boolean isValid = false;
 
-			Instant eventTime;
+			Instant eventTime = null;
 			String trackId = "";
 			int listeningTime = 0;
 
-			long eventCount = 0;
+			TreeMap<String, RawTrack> toBeRequested = new TreeMap<String, RawTrack>();
+
 			while ((c_i = reader.read()) != -1) {
 				char c = (char) c_i;
 				switch (c) {
@@ -95,8 +107,26 @@ public class SpotifyDataSource extends DataSource {
 							layer--;
 							if (layer == 0) {
 								if (isValid) {
-									eventCount++;
-									System.out.println("Found event: " + trackId + " for " + listeningTime + "ms");
+									// Process event
+									AudioPiece p = database.getPieceById(trackId);
+									AudioPiece.ListeningEvent event = new AudioPiece.ListeningEvent(eventTime, listeningTime);
+
+									if (p == null) {
+										RawTrack rawTrack = toBeRequested.get(trackId);
+										if (rawTrack == null) {
+											RawTrack newTrack = new RawTrack(trackId);
+											newTrack.addEvent(event);
+											toBeRequested.put(trackId, newTrack);
+											if (toBeRequested.size() >= MAX_REQUEST_BATCH) {
+												addTracks(new ArrayList<RawTrack>(toBeRequested.values()));
+												toBeRequested.clear();
+											}
+										} else {
+											rawTrack.addEvent(event);
+										}
+									} else {
+										p.addEvent(event);
+									}
 								}
 							}
 						} else {
@@ -140,11 +170,44 @@ public class SpotifyDataSource extends DataSource {
 						buffer += c;
 				}
 			}
-			System.out.println(eventCount);
-		} catch (
-				IOException e) {
+			addTracks(new ArrayList<RawTrack>(toBeRequested.values()));
+			reader.close();
+		} catch (IOException e) {
 			throw new Error("Couldn't load file " + f);
 		}
+	}
+
+	private class RawTrack extends AudioPiece {
+		RawTrack(String id) {
+			super(id);
+		}
+	}
+
+	private void addTracks(List<RawTrack> tracks) {
+		AudioPiece[] newPieces = requestTracks(tracks);
+		for (AudioPiece piece : newPieces)
+			database.insertAudioPiece(piece);
+	}
+
+	private AudioPiece[] requestTracks(List<RawTrack> tracks) {
+		if (tracks.isEmpty())
+			return new AudioPiece[0];
+
+		String[] ids = new String[tracks.size()];
+
+		for (int i = 0; i < tracks.size(); i++) {
+			System.out.println(tracks.get(i).id);
+			ids[i] = tracks.get(i).id.split(":")[2];
+		}
+
+		Track[] apiTracks = runRequest(api.getSeveralTracks(ids).build());
+
+		AudioPiece[] pieces = new AudioPiece[tracks.size()];
+
+		for (int i = 0; i < tracks.size(); i++)
+			pieces[i] = new Song(tracks.get(i).id, apiTracks[i].getName());
+
+		return pieces;
 	}
 
 	public <T> T runRequest(AbstractDataRequest<T> request) {

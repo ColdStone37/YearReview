@@ -55,7 +55,7 @@ public class Renderer {
 	 */
 	public void renderVideo() {
 		VideoWorker v = new VideoWorker();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1000; i++) {
 			renderFrame(i);
 			v.writeFrame(renderingSurface);
 		}
