@@ -76,6 +76,11 @@ public abstract class GlobalSettings {
 	private static int gridOuterSpacing = 15;
 
 	/**
+	 * Minmum size for covers downloaded for {@link yearreview.app.data.sources.audio.database.AudioPiece AudioPieces}.
+	 */
+	private static int audioMinCoverResolution = 200;
+
+	/**
 	 * Sets the filename of the input file.
 	 *
 	 * @param filename name of the input file
@@ -233,6 +238,15 @@ public abstract class GlobalSettings {
 	}
 
 	/**
+	 * Sets the minimum resolution for covers downloaded for {@link yearreview.app.data.sources.audio.database.AudioPiece AudioPieces}
+	 *
+	 * @param resoultion minimum resolution
+	 */
+	protected static void setAudioMinCoverResolution(int resoultion) {
+		audioMinCoverResolution = resoultion;
+	}
+
+	/**
 	 * Gets a relative path from the config file.
 	 *
 	 * @param file file to construct a relative path for
@@ -376,5 +390,14 @@ public abstract class GlobalSettings {
 	 */
 	public static int getScaledGridOuterSpacing() {
 		return gridOuterSpacing * superSampling;
+	}
+
+	/**
+	 * Gets the minimum resolution for covers to be downloaded for {@link yearreview.app.data.sources.audio.database.AudioPiece AudioPieces}.
+	 *
+	 * @return minimum resolution
+	 */
+	public static int getAudioMinCoverResolution() {
+		return audioMinCoverResolution;
 	}
 }

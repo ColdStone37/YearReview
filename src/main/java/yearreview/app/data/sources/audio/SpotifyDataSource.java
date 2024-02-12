@@ -1,5 +1,8 @@
 package yearreview.app.data.sources.audio;
 
+import se.michaelthelin.spotify.model_objects.specification.Artist;
+import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
+import se.michaelthelin.spotify.model_objects.specification.Image;
 import se.michaelthelin.spotify.requests.data.AbstractDataRequest;
 import yearreview.app.config.ConfigNode;
 import yearreview.app.config.GlobalSettings;
@@ -11,16 +14,18 @@ import org.apache.hc.core5.http.ParseException;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
 import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
-import yearreview.app.data.sources.audio.general.AudioDatabase;
-import yearreview.app.data.sources.audio.general.AudioPiece;
-import yearreview.app.data.sources.audio.general.Song;
+import yearreview.app.data.sources.audio.database.*;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class SpotifyDataSource extends DataSource {
@@ -31,6 +36,9 @@ public class SpotifyDataSource extends DataSource {
 	private final static int MAX_REQUEST_BATCH = 50;
 
 	private final AudioDatabase database;
+
+	private Map<String, RawTrack> toBeRequested;
+	private List<RawEvent> eventBuffer;
 
 	public SpotifyDataSource(ConfigNode config) {
 		super(config);
@@ -67,8 +75,31 @@ public class SpotifyDataSource extends DataSource {
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			if (listOfFiles[i].isFile()) {
+				System.out.println("Started parsing " + listOfFiles[i]);
 				parseFile(listOfFiles[i], start, end);
 			}
+		}
+		getArtistCovers();
+
+		System.out.println("Added " + database.getFilteredData(AudioData.Type.Song).size() + " songs");
+		System.out.println("Added " + database.getFilteredData(AudioData.Type.Artist).size() + " artists");
+		System.out.println("Added " + database.getFilteredData(AudioData.Type.Album).size() + " albums");
+		System.out.println("Listened to music for " + database.getTotalDuration().toMinutes() + " hours");
+	}
+
+	private void getArtistCovers() {
+		List<AudioData> artists = database.getFilteredData(AudioData.Type.Artist);
+		while (!artists.isEmpty()) {
+			int n = Math.min(MAX_REQUEST_BATCH, artists.size());
+			String[] artistIds = new String[n];
+			for (int i = 0; i < n; i++)
+				artistIds[i] = artists.get(i).id.split(":")[2];
+			Artist[] apiArtists = runRequest(api.getSeveralArtists(artistIds).build());
+			for (int i = 0; i < n; i++)
+				artists.get(i).addCover(selectPreferredCoverUrl(apiArtists[i].getImages()));
+			if (n < MAX_REQUEST_BATCH)
+				break;
+			artists = artists.subList(MAX_REQUEST_BATCH, artists.size());
 		}
 	}
 
@@ -79,62 +110,58 @@ public class SpotifyDataSource extends DataSource {
 			int layer = 0;
 			boolean inString = false;
 			String buffer = "";
-			boolean key = true;
 			String keyValue = "";
 			boolean isValid = false;
+			boolean lastWasBackSlash = false;
 
 			Instant eventTime = null;
 			String trackId = "";
+			String episodeId = "";
 			int listeningTime = 0;
 
-			TreeMap<String, RawTrack> toBeRequested = new TreeMap<String, RawTrack>();
+			toBeRequested = new TreeMap<String, RawTrack>();
+			eventBuffer = new ArrayList<RawEvent>();
 
 			while ((c_i = reader.read()) != -1) {
 				char c = (char) c_i;
-				switch (c) {
-					case '"':
-						inString = !inString;
-						continue;
-					case '{':
-						if (!inString) {
+				if (inString) {
+					switch (c) {
+						case '"':
+							if (lastWasBackSlash) {
+								buffer += '"';
+								lastWasBackSlash = false;
+							} else {
+								inString = false;
+							}
+							break;
+						case '\\':
+							lastWasBackSlash = true;
+							break;
+						default:
+							buffer += c;
+							lastWasBackSlash = false;
+					}
+				} else {
+					switch (c) {
+						case '"':
+							inString = true;
+							continue;
+						case '[':
+						case '{':
 							layer++;
-						} else {
-							buffer += '{';
-						}
-						continue;
-					case '}':
-						if (!inString) {
+							continue;
+						case ']':
 							layer--;
-							if (layer == 0) {
-								if (isValid) {
-									// Process event
-									AudioPiece p = database.getPieceById(trackId);
-									AudioPiece.ListeningEvent event = new AudioPiece.ListeningEvent(eventTime, listeningTime);
-
-									if (p == null) {
-										RawTrack rawTrack = toBeRequested.get(trackId);
-										if (rawTrack == null) {
-											RawTrack newTrack = new RawTrack(trackId);
-											newTrack.addEvent(event);
-											toBeRequested.put(trackId, newTrack);
-											if (toBeRequested.size() >= MAX_REQUEST_BATCH) {
-												addTracks(new ArrayList<RawTrack>(toBeRequested.values()));
-												toBeRequested.clear();
-											}
-										} else {
-											rawTrack.addEvent(event);
-										}
-									} else {
-										p.addEvent(event);
-									}
+							continue;
+						case '}':
+							layer--;
+							if (layer == 1) {
+								if (trackId != null) {
+									addTrack(trackId, eventTime, listeningTime);
 								}
 							}
-						} else {
-							buffer += '}';
-						}
-						continue;
-					case ',':
-						if (!inString) {
+							continue;
+						case ',':
 							switch (keyValue) {
 								case "ts":
 									eventTime = Instant.parse(buffer);
@@ -144,70 +171,164 @@ public class SpotifyDataSource extends DataSource {
 									if (isValid && !buffer.isEmpty() && !buffer.equals("null")) {
 										trackId = buffer;
 									} else {
-										isValid = false;
+										trackId = null;
+									}
+									break;
+								case "spotify_episode_uri":
+									if (isValid && !buffer.isEmpty() && !buffer.equals("null")) {
+										episodeId = buffer;
+									} else {
+										episodeId = null;
 									}
 									break;
 								case "ms_played":
 									if (isValid)
 										listeningTime = Integer.parseInt(buffer);
 									break;
+								case "username":
+								case "platform":
+								case "conn_country":
+								case "ip_addr_decrypted":
+								case "user_agent_decrypted":
+								case "master_metadata_track_name":
+								case "master_metadata_album_artist_name":
+								case "master_metadata_album_album_name":
+								case "episode_name":
+								case "episode_show_name":
+								case "reason_start":
+								case "reason_end":
+								case "shuffle":
+								case "skipped":
+								case "offline":
+								case "offline_timestamp":
+								case "incognito_mode":
+									break;
+								default:
+									System.out.println("Weird key: " + keyValue);
 							}
 							buffer = "";
-						} else {
-							buffer += ',';
-						}
-						continue;
-					case ':':
-						if (!inString) {
-							key = false;
+							continue;
+						case ':':
 							keyValue = buffer;
 							buffer = "";
-						} else {
-							buffer += ':';
-						}
-						break;
-					default:
-						buffer += c;
+							break;
+						default:
+							buffer += c;
+					}
 				}
 			}
 			addTracks(new ArrayList<RawTrack>(toBeRequested.values()));
+			toBeRequested.clear();
 			reader.close();
 		} catch (IOException e) {
 			throw new Error("Couldn't load file " + f);
 		}
 	}
 
-	private class RawTrack extends AudioPiece {
+	private void addTrack(String trackId, Instant eventTime, int duration) {
+		// Process event
+		AudioData p = database.getDataById(trackId);
+
+		if (p == null) {
+			RawTrack rawTrack = toBeRequested.get(trackId);
+			if (rawTrack == null) {
+				RawTrack newTrack = new RawTrack(trackId);
+
+				toBeRequested.put(trackId, newTrack);
+				eventBuffer.add(new RawEvent(trackId, eventTime, duration));
+				if (toBeRequested.size() >= MAX_REQUEST_BATCH) {
+					addTracks(new ArrayList<RawTrack>(toBeRequested.values()));
+					toBeRequested.clear();
+				}
+			} else {
+				eventBuffer.add(new RawEvent(trackId, eventTime, duration));
+			}
+		} else {
+			ListeningEvent event = new ListeningEvent((AudioPiece) p, eventTime, Duration.ofMillis(duration));
+			database.insertEvent(event);
+		}
+	}
+
+	private class RawTrack {
+		public final String id;
+
 		RawTrack(String id) {
-			super(id);
+			this.id = id;
+		}
+	}
+
+	private class RawEvent {
+		public final String pieceId;
+		public final Instant time;
+		public final int duration;
+
+		RawEvent(String pieceId, Instant time, int duration) {
+			this.pieceId = pieceId;
+			this.time = time;
+			this.duration = duration;
 		}
 	}
 
 	private void addTracks(List<RawTrack> tracks) {
-		AudioPiece[] newPieces = requestTracks(tracks);
-		for (AudioPiece piece : newPieces)
-			database.insertAudioPiece(piece);
-	}
-
-	private AudioPiece[] requestTracks(List<RawTrack> tracks) {
+		List<AudioPiece> pieces = new ArrayList<AudioPiece>();
 		if (tracks.isEmpty())
-			return new AudioPiece[0];
+			return;
 
 		String[] ids = new String[tracks.size()];
 
-		for (int i = 0; i < tracks.size(); i++) {
-			System.out.println(tracks.get(i).id);
+		for (int i = 0; i < tracks.size(); i++)
 			ids[i] = tracks.get(i).id.split(":")[2];
-		}
 
 		Track[] apiTracks = runRequest(api.getSeveralTracks(ids).build());
 
-		AudioPiece[] pieces = new AudioPiece[tracks.size()];
+		for (Track t : apiTracks) {
+			URL albumCoverUrl = selectPreferredCoverUrl(t.getAlbum().getImages());
+			List<AudioData> trackData = new ArrayList<AudioData>();
+			String albumId = "spotify:album:" + t.getAlbum().getId();
+			AudioData album = database.getDataById(albumId);
+			if (album == null) {
+				album = new AudioData(albumId, t.getAlbum().getName(), AudioData.Type.Album, albumCoverUrl);
+				database.insertData(album);
+			}
+			trackData.add(album);
 
-		for (int i = 0; i < tracks.size(); i++)
-			pieces[i] = new Song(tracks.get(i).id, apiTracks[i].getName());
+			for (ArtistSimplified a : t.getArtists()) {
+				String artistId = "spotify:artist:" + a.getId();
+				AudioData artist = database.getDataById(artistId);
+				if (artist == null) {
+					artist = new AudioData(artistId, a.getName(), AudioData.Type.Artist);
+					database.insertData(artist);
+				}
+				trackData.add(artist);
+			}
 
-		return pieces;
+			database.insertData(new Song("spotify:track:" + t.getId(), t.getName(), albumCoverUrl, trackData));
+		}
+
+		List<RawEvent> newBuffer = new ArrayList<RawEvent>();
+		for (RawEvent e : eventBuffer) {
+			if (database.hasData(e.pieceId)) {
+				database.insertEvent(new ListeningEvent((AudioPiece) database.getDataById(e.pieceId), e.time, Duration.ofMillis(e.duration)));
+			} else {
+				newBuffer.add(e);
+			}
+		}
+		eventBuffer = newBuffer;
+	}
+
+	private URL selectPreferredCoverUrl(Image[] images) {
+		int res = GlobalSettings.getAudioMinCoverResolution();
+		Image img = null;
+		for (Image i : images)
+			if (i.getWidth() >= res && i.getWidth().equals(i.getHeight()) && (img == null || img.getWidth() > i.getWidth()))
+				img = i;
+		if (img == null)
+			return null;
+		try {
+			return new URL(img.getUrl());
+		} catch (MalformedURLException e) {
+			return null;
+		}
 	}
 
 	public <T> T runRequest(AbstractDataRequest<T> request) {
