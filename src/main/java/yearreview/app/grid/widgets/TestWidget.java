@@ -1,6 +1,6 @@
 package yearreview.app.grid.widgets;
 
-import yearreview.app.config.ConfigNode;
+import yearreview.app.util.xml.XmlNode;
 
 import java.awt.*;
 import java.time.Instant;
@@ -20,7 +20,7 @@ public class TestWidget extends Widget {
 	 * @param h height of the widget
 	 * @param c configuration
 	 */
-	public TestWidget(float x, float y, float w, float h, ConfigNode c) {
+	public TestWidget(float x, float y, float w, float h, XmlNode c) {
 		super(x, y, w, h);
 	}
 

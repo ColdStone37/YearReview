@@ -1,9 +1,9 @@
 package yearreview.app.grid;
 
-import yearreview.app.config.ConfigNode;
 import yearreview.app.config.GlobalSettings;
 import yearreview.app.grid.widgets.Widget;
 import yearreview.app.grid.widgets.WidgetFactory;
+import yearreview.app.util.xml.XmlNode;
 
 import java.util.*;
 
@@ -31,14 +31,14 @@ public class GridManager implements Iterable<Widget> {
 	 *
 	 * @param gridConfig confguration of the grid
 	 */
-	public GridManager(ConfigNode gridConfig) {
+	public GridManager(XmlNode gridConfig) {
 		// Calculate scaling values
 		xScale = ((float) GlobalSettings.getRenderWidth() - GlobalSettings.getScaledGridOuterSpacing() * 2f + (float) GlobalSettings.getScaledGridInnerSpacing()) / (float) GlobalSettings.getGridWidth();
 		yScale = ((float) GlobalSettings.getRenderHeight() - GlobalSettings.getScaledGridOuterSpacing() * 2f + (float) GlobalSettings.getScaledGridInnerSpacing()) / (float) GlobalSettings.getGridHeight();
 
 		// Creating the widgets
 		widgets = new ArrayList<Widget>();
-		for (ConfigNode widgetConfig : gridConfig) {
+		for (XmlNode widgetConfig : gridConfig) {
 			widgetConfig.assertAttributesExist("x", "y", "w", "h");
 			int x = Integer.parseInt(widgetConfig.getAttributeByName("x"));
 			int y = Integer.parseInt(widgetConfig.getAttributeByName("y"));

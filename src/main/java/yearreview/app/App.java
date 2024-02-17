@@ -15,8 +15,8 @@ public class App {
 	public static void main(String[] args) {
 		ConfigParser c = new ConfigParser(args);
 		GridManager grid = new GridManager(c.getWidgetSettings());
-		DataManager data = new DataManager(c.getDataSourcesSettings());
-		data.loadData();
+		//DataManager data = new DataManager(c.getDataSourcesSettings());
+		//data.loadData();
 		Renderer r = new Renderer(grid);
 		r.renderVideo();
 	}

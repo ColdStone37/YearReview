@@ -1,17 +1,17 @@
 package yearreview.app.data;
 
-import yearreview.app.config.ConfigNode;
 import yearreview.app.data.sources.DataSource;
 import yearreview.app.data.sources.DataSourceFactory;
+import yearreview.app.util.xml.XmlNode;
 
 import java.util.*;
 
 public class DataManager {
 	List<DataSource> sources;
 
-	public DataManager(ConfigNode dataConfig) {
+	public DataManager(XmlNode dataConfig) {
 		sources = new ArrayList<DataSource>();
-		for (ConfigNode sourceConfig : dataConfig) {
+		for (XmlNode sourceConfig : dataConfig) {
 			DataSource newSource = DataSourceFactory.getDataSource(sourceConfig);
 			if (newSource == null)
 				throw new Error("Data Source " + sourceConfig.getName() + " isn't valid.");

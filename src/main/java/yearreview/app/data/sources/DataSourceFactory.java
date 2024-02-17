@@ -1,13 +1,10 @@
 package yearreview.app.data.sources;
 
-import yearreview.app.config.ConfigNode;
-import yearreview.app.data.sources.audio.SpotifyDataSource;
+import yearreview.app.util.xml.XmlNode;
 
 public abstract class DataSourceFactory {
-	public static DataSource getDataSource(ConfigNode config) {
+	public static DataSource getDataSource(XmlNode config) {
 		switch (config.getName()) {
-			case "Spotify":
-				return new SpotifyDataSource(config);
 		}
 		return null;
 	}

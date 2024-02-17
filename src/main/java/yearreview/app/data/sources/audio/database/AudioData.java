@@ -31,7 +31,7 @@ public class AudioData implements Comparable<AudioData> {
 		this.coverUrl = coverUrl;
 	}
 
-	public URL getCover(URL coverUrl) {
+	public URL getCover() {
 		return coverUrl;
 	}
 

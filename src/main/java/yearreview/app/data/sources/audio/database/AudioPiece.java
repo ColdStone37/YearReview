@@ -1,18 +1,21 @@
 package yearreview.app.data.sources.audio.database;
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AudioPiece extends AudioData {
+public class AudioPiece extends AudioData {
 	private final static String NO_AUTHOR_STRING = "No Authors";
 
 	private final List<AudioData> data;
 	private final String authors;
+	private final Duration pieceDuration;
 
-	public AudioPiece(String id, String name, Type type, URL coverUrl, List<AudioData> data) {
+	public AudioPiece(String id, String name, Type type, URL coverUrl, Duration pieceDuration, List<AudioData> data) {
 		super(id, name, type, coverUrl);
 		this.data = data;
+		this.pieceDuration = pieceDuration;
 		authors = getAuthorsString();
 	}
 

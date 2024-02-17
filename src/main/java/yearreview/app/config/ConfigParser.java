@@ -9,6 +9,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.time.Instant;
 
+import yearreview.app.util.xml.XmlNode;
+
 /**
  * Parser for the command line arguments and the configuration file.
  *
@@ -22,11 +24,11 @@ public class ConfigParser {
 	/**
 	 * Configuration for the widgets.
 	 */
-	private ConfigNode widgets;
+	private XmlNode widgets;
 	/**
 	 * Configuration for the data sources.
 	 */
-	private ConfigNode dataSources;
+	private XmlNode dataSources;
 
 	/**
 	 * Constructs a ConfigParser and parses the arguments and config file.
@@ -97,7 +99,7 @@ public class ConfigParser {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(f);
 			doc.getDocumentElement().normalize();
-			ConfigNode root = new ConfigNode(doc.getElementsByTagName("Configuration").item(0));
+			XmlNode root = XmlNode.parseXmlFile(f).getChildByName("Configuration");
 
 			// Test for correct version
 			if (!root.getAttributeByName("version").equals(XML_VERSION))
@@ -107,7 +109,7 @@ public class ConfigParser {
 			root.assertChildNodesExist("Settings", "DataSources", "Widgets");
 
 			// Get the children
-			ConfigNode settings = root.getChildByName("Settings");
+			XmlNode settings = root.getChildByName("Settings");
 			dataSources = root.getChildByName("DataSources");
 			widgets = root.getChildByName("Widgets");
 
@@ -122,7 +124,7 @@ public class ConfigParser {
 	 *
 	 * @return configuration
 	 */
-	public ConfigNode getWidgetSettings() {
+	public XmlNode getWidgetSettings() {
 		return widgets;
 	}
 
@@ -131,7 +133,7 @@ public class ConfigParser {
 	 *
 	 * @return configuration
 	 */
-	public ConfigNode getDataSourcesSettings() {
+	public XmlNode getDataSourcesSettings() {
 		return dataSources;
 	}
 
@@ -140,11 +142,11 @@ public class ConfigParser {
 	 *
 	 * @param settings configuration node containing the settings
 	 */
-	private void parseSettings(ConfigNode settings) {
+	private void parseSettings(XmlNode settings) {
 		settings.assertChildNodesExist("Start", "End");
 		GlobalSettings.setVideoStart(Instant.parse(settings.getChildContent("Start")));
 		GlobalSettings.setVideoEnd(Instant.parse(settings.getChildContent("End")));
-		ConfigNode video = settings.getChildByName("Video");
+		XmlNode video = settings.getChildByName("Video");
 		if (video != null) {
 			if (video.hasChild("Width"))
 				GlobalSettings.setVideoWidth(Integer.parseInt(video.getChildContent("Width")));
@@ -155,7 +157,7 @@ public class ConfigParser {
 			if (video.hasChild("Supersampling"))
 				GlobalSettings.setSupersampling(Integer.parseInt(video.getChildContent("Supersampling")));
 		}
-		ConfigNode grid = settings.getChildByName("Grid");
+		XmlNode grid = settings.getChildByName("Grid");
 		if (grid != null) {
 			if (grid.hasChild("Width"))
 				GlobalSettings.setGridWidth(Integer.parseInt(grid.getChildContent("Width")));

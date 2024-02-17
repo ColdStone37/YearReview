@@ -1,14 +1,14 @@
 package yearreview.app.data.sources;
 
-import yearreview.app.config.ConfigNode;
 import yearreview.app.config.GlobalSettings;
+import yearreview.app.util.xml.XmlNode;
 
 import java.time.Instant;
 
 public abstract class DataSource extends Thread {
 	public final String tag;
 
-	public DataSource(ConfigNode c) {
+	public DataSource(XmlNode c) {
 		tag = c.getAttributeByName("tag");
 		parseConfig(c);
 	}
@@ -18,7 +18,7 @@ public abstract class DataSource extends Thread {
 		loadData(GlobalSettings.getStartTime(), GlobalSettings.getEndTime());
 	}
 
-	public abstract void parseConfig(ConfigNode c);
+	public abstract void parseConfig(XmlNode c);
 
 	public abstract void loadData(Instant start, Instant end);
 }
