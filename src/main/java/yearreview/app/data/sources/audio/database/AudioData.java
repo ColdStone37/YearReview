@@ -3,20 +3,17 @@ package yearreview.app.data.sources.audio.database;
 import java.net.URL;
 
 public class AudioData implements Comparable<AudioData> {
-	public final String id;
 	public final String name;
 	public final Type type;
 	private URL coverUrl;
 
-	public AudioData(String id, String name, Type type) {
-		this.id = id;
+	public AudioData(String name, Type type) {
 		this.name = name;
 		this.type = type;
 		coverUrl = null;
 	}
 
-	public AudioData(String id, String name, Type type, URL coverUrl) {
-		this.id = id;
+	public AudioData(String name, Type type, URL coverUrl) {
 		this.name = name;
 		this.type = type;
 		this.coverUrl = coverUrl;
@@ -24,7 +21,7 @@ public class AudioData implements Comparable<AudioData> {
 
 	@Override
 	public int compareTo(AudioData other) {
-		return id.compareTo(other.id);
+		return name.compareTo(other.name);
 	}
 
 	public void addCover(URL coverUrl) {

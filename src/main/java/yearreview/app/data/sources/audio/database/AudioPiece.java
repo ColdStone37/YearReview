@@ -1,22 +1,14 @@
 package yearreview.app.data.sources.audio.database;
 
-import java.net.URL;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AudioPiece extends AudioData {
-	private final static String NO_AUTHOR_STRING = "No Authors";
-
 	private final List<AudioData> data;
-	private final String authors;
-	private final Duration pieceDuration;
 
-	public AudioPiece(String id, String name, Type type, URL coverUrl, Duration pieceDuration, List<AudioData> data) {
-		super(id, name, type, coverUrl);
+	public AudioPiece(String name, Type type, List<AudioData> data) {
+		super(name, type);
 		this.data = data;
-		this.pieceDuration = pieceDuration;
-		authors = getAuthorsString();
 	}
 
 	public final List<AudioData> filterData(Type type) {
@@ -25,19 +17,5 @@ public class AudioPiece extends AudioData {
 			if (a.type == type)
 				filtered.add(a);
 		return filtered;
-	}
-
-	public final String getAuthors() {
-		return authors;
-	}
-
-	protected String getAuthorsString() {
-		List<AudioData> authorsList = filterData(Type.Author);
-		if (authorsList.isEmpty())
-			return NO_AUTHOR_STRING;
-		String authors = "";
-		for (AudioData author : authorsList)
-			authors += author.name + ", ";
-		return authors.substring(0, authors.length() - 2);
 	}
 }
