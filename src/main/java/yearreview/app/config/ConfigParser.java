@@ -37,20 +37,7 @@ public class ConfigParser {
 	 */
 	public ConfigParser(String[] args) {
 		// Add command line options
-		Options options = new Options();
-
-		Option config = new Option("c", "config", true, "config file path");
-		config.setRequired(true);
-		options.addOption(config);
-
-		Option output = new Option("o", "output", true, "output file name");
-		options.addOption(output);
-
-		Option delete = new Option("d", "delete", false, "deletes file with same name as output if exists");
-		options.addOption(delete);
-
-		Option help = new Option("h", "help", false, "Prints this menu");
-		options.addOption(help);
+		Options options = getOptions();
 
 		HelpFormatter formatter = new HelpFormatter();
 
@@ -71,7 +58,8 @@ public class ConfigParser {
 
 			// Delete the video file if it already exists and the -d flag is set
 			if (cmd.hasOption("delete") && f.isFile())
-				f.delete();
+				if(!f.delete())
+					throw new Error("Unable to delete File " + f);
 
 			// ffmpeg doesn't like it when the file already exists
 			if (f.isFile())
@@ -85,6 +73,24 @@ public class ConfigParser {
 			formatter.printHelp("set the configuration file with the -c option, all other arguments are optional", options);
 			System.exit(1);
 		}
+	}
+
+	private static Options getOptions() {
+		Options options = new Options();
+
+		Option config = new Option("c", "config", true, "config file path");
+		config.setRequired(true);
+		options.addOption(config);
+
+		Option output = new Option("o", "output", true, "output file name");
+		options.addOption(output);
+
+		Option delete = new Option("d", "delete", false, "deletes file with same name as output if exists");
+		options.addOption(delete);
+
+		Option help = new Option("h", "help", false, "Prints this menu");
+		options.addOption(help);
+		return options;
 	}
 
 	/**

@@ -6,7 +6,7 @@ import java.awt.*;
 import java.time.Instant;
 
 /**
- * Test Widget thats just a blue rectangle.
+ * Test Widget that's just a blue rectangle.
  *
  * @author ColdStone37
  */
@@ -25,7 +25,7 @@ public class TestWidget extends Widget {
 	}
 
 	/**
-	 * Renders the widget in it's local space (meaning that the coordinate system goes from (0, 0) to (w, h)).
+	 * Renders the widget in its local space (meaning that the coordinate system goes from (0, 0) to (w, h)).
 	 *
 	 * @param graphic graphic that gets rendered to
 	 * @param time    time at which the widget is rendered

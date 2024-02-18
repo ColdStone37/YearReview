@@ -29,7 +29,7 @@ public class GridManager implements Iterable<Widget> {
 	/**
 	 * Constructs a {@link GridManager} from a given configuration.
 	 *
-	 * @param gridConfig confguration of the grid
+	 * @param gridConfig configuration of the grid
 	 */
 	public GridManager(XmlNode gridConfig) {
 		// Calculate scaling values
@@ -62,8 +62,8 @@ public class GridManager implements Iterable<Widget> {
 	 * @param x x-position of the widget in grid space
 	 * @param y y-position of the widget in grid space
 	 * @param w width of the widget in grid space
-	 * @param h height of the widet in grid space
-	 * @return new dimensions bundeled in {@link WidgetPosition}-object
+	 * @param h height of the widget in grid space
+	 * @return new dimensions bundled in {@link WidgetPosition}-object
 	 */
 	private WidgetPosition transform(int x, int y, int w, int h) {
 		float x_f = x * xScale;

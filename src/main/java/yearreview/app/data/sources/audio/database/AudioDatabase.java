@@ -3,9 +3,9 @@ package yearreview.app.data.sources.audio.database;
 import java.time.Duration;
 import java.util.*;
 
-public class AudioDatabase {
-	private TreeSet<ListeningEvent> events;
-	private Map<String, AudioData> dataMap;
+public class AudioDatabase implements Iterable<ListeningEvent> {
+	private final TreeSet<ListeningEvent> events;
+	private final Map<String, AudioData> dataMap;
 	private Duration totalDuration = Duration.ZERO;
 
 	public AudioDatabase() {
@@ -58,5 +58,10 @@ public class AudioDatabase {
 
 	public int getDataCount(){
 		return dataMap.size();
+	}
+
+	@Override
+	public Iterator<ListeningEvent> iterator() {
+		return events.iterator();
 	}
 }

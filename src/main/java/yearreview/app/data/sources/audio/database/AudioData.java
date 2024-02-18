@@ -1,8 +1,10 @@
 package yearreview.app.data.sources.audio.database;
 
+import yearreview.app.data.processor.toplist.TopListCompatibleItem;
+
 import java.net.URL;
 
-public class AudioData implements Comparable<AudioData> {
+public class AudioData implements Comparable<AudioData>, TopListCompatibleItem {
 	public final String name;
 	public final Type type;
 	private URL coverUrl;
@@ -28,6 +30,21 @@ public class AudioData implements Comparable<AudioData> {
 		this.coverUrl = coverUrl;
 	}
 
+	@Override
+	public String getMainText() {
+		return name;
+	}
+
+	@Override
+	public String getSubText() {
+		return null;
+	}
+
+	@Override
+	public boolean hasSubText() {
+		return false;
+	}
+
 	public URL getCover() {
 		return coverUrl;
 	}
@@ -38,8 +55,7 @@ public class AudioData implements Comparable<AudioData> {
 		Episode,
 		Podcast,
 		Album,
-		Artist,
-		Author;
+		Artist;
 
 		public boolean isPiece() {
 			switch (this) {

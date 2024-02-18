@@ -17,31 +17,58 @@ import java.util.List;
 import javax.json.*;
 import javax.json.stream.*;
 
-public class SpotifyAdapter extends SongDataAdapter {
+/**
+ * A Adapter to input the spotify extended listening into the {@link AudioDatabase}.
+ *
+ * @author ColdStone37
+ */
+public class SpotifyAdapter extends AudioDatabaseAdapter {
+    /**
+     * Path to the files exported from spotify.
+     */
     private final String dataPath;
 
+    /**
+     * Constructs a new SpotifyAdapter with a database to use and a configuration.
+     * @param database database to insert the songs
+     * @param config configuration for the adapter
+     */
     public SpotifyAdapter(AudioDatabase database, XmlNode config) {
         super(database);
         dataPath = config.getChildContent("Path");
     }
 
+    /**
+     * Loads the data from the specified path.
+     * @param start start time of data to load
+     * @param end end time of data to load
+     * @throws IOException if the all or some of the files can't be read
+     */
     public void loadData(Instant start, Instant end) throws IOException {
         File folder = GlobalSettings.getRelativePath(dataPath);
         File[] listOfFiles = folder.listFiles();
         if(listOfFiles == null)
             throw new IOException("Passed directory doesn't exist");
+
+        // Parse all files in the directory
         for (File f : listOfFiles) {
             if (f.isFile()) {
-                System.out.println("Started parsing " + f);
+                // Create new JsonParser
                 JsonParser parser = Json.createParser(Files.newInputStream(f.toPath()));
                 parser.next();
-                parser.getArrayStream().filter(e->isBetween(Instant.parse(e.asJsonObject().getString("ts")), start, end)).forEach(value -> parseJsonObject(value.asJsonObject()));
+
+                // Create Stream of JsonObjects from Array, filter them by time and process them in parseJsonObject-function
+                parser.getArrayStream().filter(e->isBetween(Instant.parse(e.asJsonObject().getString("ts")), start, end)).forEach(value -> processJsonObject(value.asJsonObject()));
             }
         }
-        System.out.println(database.getFilteredData(AudioData.Type.Song).size());
+        //System.out.println(database.getFilteredData(AudioData.Type.Song).size());
     }
 
-    private void parseJsonObject(JsonObject object) {
+    /**
+     * Processes a JsonObject from the Stream and inserts it into the database.
+     * @param object object to process
+     */
+    private void processJsonObject(JsonObject object) {
         Instant time = Instant.parse(object.getString("ts"));
         Duration duration = Duration.ofMillis(object.getInt("ms_played"));
         if(!object.isNull("master_metadata_track_name")) {
@@ -82,6 +109,13 @@ public class SpotifyAdapter extends SongDataAdapter {
         }
     }
 
+    /**
+     * Tests if a time is between to {@link Instant}
+     * @param val value to test whether it lies in between
+     * @param start start of interval to test
+     * @param end end of interval to test
+     * @return true if val is between start and end, false otherwise
+     */
     private boolean isBetween(Instant val, Instant start, Instant end) {
         return val.isAfter(start) && val.isBefore(end);
     }
