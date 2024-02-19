@@ -1,8 +1,11 @@
 package yearreview.app.data.sources.audio;
 
+import yearreview.app.data.processor.toplist.TopListAdapter;
 import yearreview.app.data.sources.DataSource;
 import yearreview.app.data.sources.audio.adapter.AudioDatabaseAdapter;
+import yearreview.app.data.sources.audio.database.AudioData;
 import yearreview.app.data.sources.audio.database.AudioDatabase;
+import yearreview.app.data.sources.audio.database.AudioTopListAdapter;
 import yearreview.app.util.xml.XmlNode;
 
 import java.io.IOException;
@@ -26,5 +29,9 @@ public class AudioDataSource extends DataSource {
     public void loadData(Instant start, Instant end) throws IOException {
         for(AudioDatabaseAdapter adapter : adapters)
             adapter.loadData(start, end);
+    }
+
+    public TopListAdapter getTopListAdapter(AudioData.Type type) {
+        return new AudioTopListAdapter(database, type);
     }
 }

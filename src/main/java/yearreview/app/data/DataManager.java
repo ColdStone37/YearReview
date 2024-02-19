@@ -19,6 +19,13 @@ public class DataManager {
 		}
 	}
 
+	public DataSource getSourceByTag(String tag) {
+		for(DataSource source : sources)
+			if(source.tag.equals(tag))
+				return source;
+		return null;
+	}
+
 	public void loadData() {
 		// Start all loading threads
 		for (DataSource source : sources)

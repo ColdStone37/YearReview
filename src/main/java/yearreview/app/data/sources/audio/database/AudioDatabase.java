@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.util.*;
 
 public class AudioDatabase implements Iterable<ListeningEvent> {
-	private final TreeSet<ListeningEvent> events;
+	private final SortedSet<ListeningEvent> events;
 	private final Map<String, AudioData> dataMap;
 	private Duration totalDuration = Duration.ZERO;
 

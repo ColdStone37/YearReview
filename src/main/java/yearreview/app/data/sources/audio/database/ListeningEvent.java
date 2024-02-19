@@ -1,12 +1,12 @@
 package yearreview.app.data.sources.audio.database;
 
 import yearreview.app.data.processor.toplist.TopListCompatibleItem;
-import yearreview.app.data.processor.toplist.TopListEvent;
+import yearreview.app.data.processor.toplist.TopListAdapter;
 
 import java.time.Duration;
 import java.time.Instant;
 
-public class ListeningEvent implements Comparable<ListeningEvent>, TopListEvent {
+public class ListeningEvent implements Comparable<ListeningEvent> {
 	public final AudioPiece listenedTo;
 	public final Instant time;
 	public final Duration duration;
@@ -20,20 +20,5 @@ public class ListeningEvent implements Comparable<ListeningEvent>, TopListEvent 
 	@Override
 	public int compareTo(ListeningEvent other) {
 		return time.compareTo(other.time);
-	}
-
-	@Override
-	public Instant getEventTime() {
-		return time;
-	}
-
-	@Override
-	public TopListCompatibleItem getItem() {
-		return listenedTo;
-	}
-
-	@Override
-	public Number getValue() {
-		return null;
 	}
 }
