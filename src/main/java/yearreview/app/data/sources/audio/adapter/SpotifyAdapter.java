@@ -59,8 +59,9 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
 
                 // Create Stream of JsonObjects from Array, filter them by time and process them in parseJsonObject-function
                 parser.getArrayStream()
-                        .filter(e->isBetween(Instant.parse(e.asJsonObject().getString("ts")), start, end))
-                        .forEach(value -> processJsonObject(value.asJsonObject()));
+                        .map(JsonValue::asJsonObject)
+                        .filter(e->isBetween(Instant.parse(e.getString("ts")), start, end))
+                        .forEach(this::processJsonObject);
             }
         }
         //System.out.println(database.getFilteredData(AudioData.Type.Song).size());
