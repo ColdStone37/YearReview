@@ -18,7 +18,7 @@ import javax.json.*;
 import javax.json.stream.*;
 
 /**
- * A Adapter to input the spotify extended listening into the {@link AudioDatabase}.
+ * An Adapter to input the spotify extended listening into the {@link AudioDatabase}.
  *
  * @author ColdStone37
  */
@@ -58,7 +58,9 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
                 parser.next();
 
                 // Create Stream of JsonObjects from Array, filter them by time and process them in parseJsonObject-function
-                parser.getArrayStream().filter(e->isBetween(Instant.parse(e.asJsonObject().getString("ts")), start, end)).forEach(value -> processJsonObject(value.asJsonObject()));
+                parser.getArrayStream()
+                        .filter(e->isBetween(Instant.parse(e.asJsonObject().getString("ts")), start, end))
+                        .forEach(value -> processJsonObject(value.asJsonObject()));
             }
         }
         //System.out.println(database.getFilteredData(AudioData.Type.Song).size());

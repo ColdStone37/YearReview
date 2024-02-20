@@ -1,5 +1,7 @@
 package yearreview.app.config;
 
+import io.jenetics.jpx.Length;
+
 import java.awt.Color;
 import java.io.File;
 import java.nio.file.Path;
@@ -16,7 +18,7 @@ public abstract class GlobalSettings {
 	 */
 	private static Path inputPath;
 	/**
-	 * Strores the name of the output video file. (Default: out.mp4)
+	 * Stores the name of the output video file. (Default: out.mp4)
 	 */
 	private static String outputFilename = "out.mp4";
 	/**
@@ -76,9 +78,14 @@ public abstract class GlobalSettings {
 	private static int gridOuterSpacing = 15;
 
 	/**
-	 * Minmum size for covers downloaded for {@link yearreview.app.data.sources.audio.database.AudioPiece AudioPieces}.
+	 * Minimum size for covers downloaded for {@link yearreview.app.data.sources.audio.database.AudioPiece AudioPieces}.
 	 */
 	private static int audioMinCoverResolution = 200;
+
+	/**
+	 * Unit used for all length. (Default: {@link Length.Unit#METER})
+	 */
+	private static Length.Unit lengthUnit = Length.Unit.METER;
 
 	/**
 	 * Sets the filename of the input file.
@@ -240,10 +247,18 @@ public abstract class GlobalSettings {
 	/**
 	 * Sets the minimum resolution for covers downloaded for {@link yearreview.app.data.sources.audio.database.AudioPiece AudioPieces}
 	 *
-	 * @param resoultion minimum resolution
+	 * @param resolution minimum resolution
 	 */
-	protected static void setAudioMinCoverResolution(int resoultion) {
-		audioMinCoverResolution = resoultion;
+	protected static void setAudioMinCoverResolution(int resolution) {
+		audioMinCoverResolution = resolution;
+	}
+
+	/**
+	 * Sets the length unit to use.
+	 * @param unit unit to use
+	 */
+	protected static void setLengthUnit(Length.Unit unit) {
+		lengthUnit = unit;
 	}
 
 	/**
@@ -399,5 +414,14 @@ public abstract class GlobalSettings {
 	 */
 	public static int getAudioMinCoverResolution() {
 		return audioMinCoverResolution;
+	}
+
+	/**
+	 * Gets the unit used for all lengths.
+	 *
+	 * @return length unit used
+	 */
+	public static Length.Unit getLengthUnit() {
+		return lengthUnit;
 	}
 }

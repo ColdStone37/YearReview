@@ -44,10 +44,8 @@ public class DurationValue extends Value {
 
 	@Override
 	public int compareTo(Value value) {
-		if(value instanceof DurationValue) {
+		if(value instanceof DurationValue)
 			return duration.compareTo((Duration) value.getValue());
-		} else {
-			return Integer.MAX_VALUE;
-		}
+		return Integer.MAX_VALUE;
 	}
 }

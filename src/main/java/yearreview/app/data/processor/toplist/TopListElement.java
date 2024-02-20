@@ -8,7 +8,7 @@ public class TopListElement implements Comparable<TopListElement> {
 	private static int count = 0;
 	private final int id;
 	private final TopListCompatibleItem item;
-	private Value value;
+	private final Value value;
 
 	public TopListElement(TopListCompatibleItem item, Value value) {
 		id = count;
