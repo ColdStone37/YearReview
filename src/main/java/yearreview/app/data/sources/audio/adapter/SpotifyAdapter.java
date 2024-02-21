@@ -18,7 +18,7 @@ import javax.json.*;
 import javax.json.stream.*;
 
 /**
- * An Adapter to input the spotify extended listening into the {@link AudioDatabase}.
+ * An Adapter to input the Spotify extended listening (that can be exported <a href="https://www.spotify.com/us/account/privacy/">here</a>) into the {@link AudioDatabase}.
  *
  * @author ColdStone37
  */
@@ -64,7 +64,6 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
                         .forEach(this::processJsonObject);
             }
         }
-        //System.out.println(database.getFilteredData(AudioData.Type.Song).size());
     }
 
     /**
@@ -78,16 +77,16 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
             // Object is a song
 
             // Artist
-            AudioData artist = database.getData(object.getString("master_metadata_album_artist_name"), AudioData.Type.Artist);
+            AudioData artist = database.getData(object.getString("master_metadata_album_artist_name"), AudioData.Type.ARTIST);
             // Album
-            AudioData album = database.getData(object.getString("master_metadata_album_album_name"), AudioData.Type.Album);
+            AudioData album = database.getData(object.getString("master_metadata_album_album_name"), AudioData.Type.ALBUM);
 
             List<AudioData> songData = new ArrayList<AudioData>(2);
             songData.add(artist);
             songData.add(album);
 
             // Song
-            AudioPiece song = database.getPiece(object.getString("master_metadata_track_name"), songData, AudioData.Type.Song);
+            AudioPiece song = database.getPiece(object.getString("master_metadata_track_name"), songData, AudioData.Type.SONG);
 
             // Event
             ListeningEvent event = new ListeningEvent(song, time, duration);
@@ -97,13 +96,13 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
                 // Object is an episode of a podcast
 
                 // Podcast
-                AudioData podcast = database.getData(object.getString("episode_show_name"), AudioData.Type.Podcast);
+                AudioData podcast = database.getData(object.getString("episode_show_name"), AudioData.Type.PODCAST);
 
                 List<AudioData> episodeData = new ArrayList<AudioData>(2);
                 episodeData.add(podcast);
 
                 // Episode
-                AudioPiece episode = database.getPiece(object.getString("episode_name"), episodeData, AudioData.Type.Episode);
+                AudioPiece episode = database.getPiece(object.getString("episode_name"), episodeData, AudioData.Type.EPISODE);
 
                 // Event
                 ListeningEvent event = new ListeningEvent(episode, time, duration);
