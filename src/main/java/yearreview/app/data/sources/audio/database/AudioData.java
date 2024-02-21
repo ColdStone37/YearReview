@@ -1,24 +1,25 @@
 package yearreview.app.data.sources.audio.database;
 
 import yearreview.app.data.processor.toplist.TopListCompatibleItem;
+import yearreview.app.util.image.ImageReference;
 
 import java.net.URL;
 
 public class AudioData implements Comparable<AudioData>, TopListCompatibleItem {
 	public final String name;
 	public final Type type;
-	private URL coverUrl;
+	private ImageReference cover;
 
 	public AudioData(String name, Type type) {
 		this.name = name;
 		this.type = type;
-		coverUrl = null;
+		cover = null;
 	}
 
-	public AudioData(String name, Type type, URL coverUrl) {
+	public AudioData(String name, Type type, ImageReference cover) {
 		this.name = name;
 		this.type = type;
-		this.coverUrl = coverUrl;
+		this.cover = cover;
 	}
 
 	@Override
@@ -26,8 +27,8 @@ public class AudioData implements Comparable<AudioData>, TopListCompatibleItem {
 		return name.compareTo(other.name);
 	}
 
-	public void addCover(URL coverUrl) {
-		this.coverUrl = coverUrl;
+	public void addCover(ImageReference coverUrl) {
+		this.cover = coverUrl;
 	}
 
 	@Override
@@ -45,8 +46,8 @@ public class AudioData implements Comparable<AudioData>, TopListCompatibleItem {
 		return false;
 	}
 
-	public URL getCover() {
-		return coverUrl;
+	public ImageReference getImage() {
+		return cover;
 	}
 
 	public enum Type {

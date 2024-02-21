@@ -13,6 +13,7 @@ public class AudioTopListAdapter implements TopListAdapter {
 	private final AudioData.Type type;
 	private final Iterator<ListeningEvent> eventIterator;
 	private ListeningEvent currentEvent;
+	private Duration currentEventListeningDuration;
 	private final Map<AudioData, TopListElement> audioMap;
 	public AudioTopListAdapter(AudioDatabase database, AudioData.Type type) {
 		this.database = database;
@@ -20,6 +21,7 @@ public class AudioTopListAdapter implements TopListAdapter {
 		eventIterator = database.iterator();
 		if(eventIterator.hasNext()){
 			currentEvent = eventIterator.next();
+			currentEventListeningDuration = Duration.ZERO;
 		} else {
 			currentEvent = null;
 		}
@@ -37,14 +39,27 @@ public class AudioTopListAdapter implements TopListAdapter {
 			} else {
 				data.addAll(listenedTo.filterData(type));
 			}
-			for(AudioData d : data){
-				audioMap.computeIfAbsent(d, k -> new TopListElement(d, new DurationValue(Duration.ZERO)))
-						.addValue(new DurationValue(currentEvent.duration));
-			}
-			if(eventIterator.hasNext()){
-				currentEvent = eventIterator.next();
+			Instant eventEnd = currentEvent.time.plus(currentEvent.duration);
+			if(eventEnd.isAfter(t)) {
+				Duration part = Duration.between(currentEvent.time.plus(currentEventListeningDuration), t);
+				System.out.println(part);
+
+				for(AudioData d : data)
+					audioMap.computeIfAbsent(d, k -> new TopListElement(d, new DurationValue(Duration.ZERO)))
+							.addValue(new DurationValue(part));
+				currentEventListeningDuration = currentEventListeningDuration.plus(part);
+				break;
 			} else {
-				currentEvent = null;
+				for(AudioData d : data)
+					audioMap.computeIfAbsent(d, k -> new TopListElement(d, new DurationValue(Duration.ZERO)))
+							.addValue(new DurationValue(currentEvent.duration.minus(currentEventListeningDuration)));
+
+				if(eventIterator.hasNext()){
+					currentEvent = eventIterator.next();
+					currentEventListeningDuration = Duration.ZERO;
+				} else {
+					currentEvent = null;
+				}
 			}
 		}
 		return audioMap.values();

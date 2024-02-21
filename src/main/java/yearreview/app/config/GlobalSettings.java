@@ -85,7 +85,7 @@ public abstract class GlobalSettings {
 	/**
 	 * Unit used for all length. (Default: {@link Length.Unit#METER})
 	 */
-	private static Length.Unit lengthUnit = Length.Unit.METER;
+	private static Length.Unit lengthUnit = Length.Unit.KILOMETER;
 
 	/**
 	 * Sets the filename of the input file.

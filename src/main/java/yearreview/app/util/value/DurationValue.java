@@ -9,19 +9,27 @@ public class DurationValue extends Value {
 	private final static long[] INTERVAL_SIZES = {1000, 60, 60, 24, 365, Integer.MAX_VALUE};
 	private final static int [] INTERVAL_VALUE_LENGTHS = {3, 2, 2, 2, 3, 1};
 	private final static String[] INTERVAL_NAMES = {"ms", "s", "m", "h", "d", "y"};
-	private Duration duration;
+	private final Duration duration;
 	public DurationValue(Duration d) {
 		duration = d;
 	}
 	@Override
 	public String toString() {
 		long currentVal = duration.toMillis();
+		if(currentVal == 0)
+			return "0ms";
+
+		StringBuilder durationString = new StringBuilder();
+		if(currentVal < 0) {
+			durationString.append("-");
+			currentVal *= -1;
+		}
+
 		List<Long> unitValues = new ArrayList<Long>(6);
 		for(int i = 0; i < INTERVAL_SIZES.length && currentVal > 0; i++) {
 			unitValues.add((currentVal % INTERVAL_SIZES[i]));
 			currentVal /= INTERVAL_SIZES[i];
 		}
-		StringBuilder durationString = new StringBuilder();
 		for(int i = unitValues.size()-1; i >= Math.max(0, unitValues.size() - DURATION_SHOW_PARTS); i--)
 			durationString.append(String.format("%0"+(i == unitValues.size()-1 ? 1 : INTERVAL_VALUE_LENGTHS[i])+"d", unitValues.get(i)))
 					.append(INTERVAL_NAMES[i]).append(" ");
@@ -30,11 +38,12 @@ public class DurationValue extends Value {
 	}
 
 	@Override
-	public void addValue(Value other) {
+	public Value plus(Value other) {
 		if(other instanceof DurationValue) {
 			Duration otherDuration = (Duration) other.getValue();
-			duration = duration.plus(otherDuration);
+			return new DurationValue(duration.plus(otherDuration));
 		}
+		return null;
 	}
 
 	@Override

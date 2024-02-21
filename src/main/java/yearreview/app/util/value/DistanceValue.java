@@ -44,10 +44,12 @@ public class DistanceValue extends Value {
 	}
 
 	@Override
-	public void addValue(Value other) {
+	public Value plus(Value other) {
 		if(other instanceof DistanceValue) {
-			distance = Length.of(((Length)(other.getValue())).doubleValue() + distance.doubleValue(), Length.Unit.METER);
+			DistanceValue otherDistance = (DistanceValue) other;
+			return new DistanceValue(((Length)(otherDistance.getValue())).doubleValue() + distance.doubleValue(), Length.Unit.METER);
 		}
+		return null;
 	}
 
 	@Override

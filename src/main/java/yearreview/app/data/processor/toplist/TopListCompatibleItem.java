@@ -1,10 +1,10 @@
 package yearreview.app.data.processor.toplist;
 
-import java.net.URL;
+import yearreview.app.util.image.ImageReference;
 
 public interface TopListCompatibleItem {
 	public String getMainText();
 	public String getSubText();
 	public boolean hasSubText();
-	public URL getCover();
+	public ImageReference getImage();
 }

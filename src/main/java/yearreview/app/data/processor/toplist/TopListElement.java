@@ -8,7 +8,7 @@ public class TopListElement implements Comparable<TopListElement> {
 	private static int count = 0;
 	private final int id;
 	private final TopListCompatibleItem item;
-	private final Value value;
+	private Value value;
 
 	public TopListElement(TopListCompatibleItem item, Value value) {
 		id = count;
@@ -18,7 +18,7 @@ public class TopListElement implements Comparable<TopListElement> {
 	}
 
 	public void addValue(Value value) {
-		this.value.addValue(value);
+		this.value = this.value.plus(value);
 	}
 
 	public Value getValue() {

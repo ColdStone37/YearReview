@@ -1,9 +1,12 @@
 package yearreview.app.data.sources.fitness;
 
+import yearreview.app.data.processor.toplist.TopListAdapter;
 import yearreview.app.data.sources.DataSource;
 import yearreview.app.data.sources.fitness.adapters.FitnessAdapter;
 import yearreview.app.data.sources.fitness.databse.Activity;
 import yearreview.app.data.sources.fitness.databse.FitnessDatabase;
+import yearreview.app.data.sources.fitness.databse.FitnessDistanceTopListAdapter;
+import yearreview.app.data.sources.fitness.databse.FitnessDurationTopListAdapter;
 import yearreview.app.util.xml.XmlNode;
 
 import java.io.IOException;
@@ -30,7 +33,13 @@ public class FitnessDataSource extends DataSource {
 	public void loadData(Instant start, Instant end) throws IOException {
 		for(FitnessAdapter adapter : adapters)
 			adapter.loadData(start, end);
-		for(Activity a : database)
-			System.out.println(a);
+	}
+
+	public TopListAdapter getDistanceTopListAdapter(){
+		return new FitnessDistanceTopListAdapter(database);
+	}
+
+	public TopListAdapter getDurationTopListAdapter(){
+		return new FitnessDurationTopListAdapter(database);
 	}
 }

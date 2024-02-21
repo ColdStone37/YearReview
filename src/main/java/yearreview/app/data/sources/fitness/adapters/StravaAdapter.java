@@ -13,6 +13,7 @@ import yearreview.app.util.xml.XmlNode;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -66,8 +67,8 @@ public class StravaAdapter extends FitnessAdapter {
 		if(line.size() == 86){
 			String activityName = line.get(2);
 			Instant startActivity = languageToDateformat[language].parse(line.get(1), Instant::from);
-			Instant endActivity = startActivity.plusSeconds(Integer.parseInt(line.get(5)));
-			DistanceValue distance = new DistanceValue(Double.parseDouble(line.get(6).replace(",", ".")), Length.Unit.KILOMETER);
+			Duration duration = Duration.ofSeconds(Integer.parseInt(line.get(5)));
+			Length distance = Length.of(Double.parseDouble(line.get(6).replace(",", ".")), Length.Unit.KILOMETER);
 			ActivityType type = activityStringToType.get(language).get(line.get(3));
 			if(type == null)
 				System.out.println(line.get(3));
@@ -75,12 +76,13 @@ public class StravaAdapter extends FitnessAdapter {
 				if(!line.get(12).isEmpty()){
 					Path activityPath = GlobalSettings.getRelativePath(dataPath + "/" + line.get(12)).toPath();
 					try {
-						database.insertActivity(new Activity(activityName, type, startActivity, endActivity, distance, GPX.read(activityPath)));
+						database.insertActivity(new Activity(activityName, type, startActivity, duration, distance, GPX.read(activityPath)));
 					} catch (IOException e) {
-						System.out.println("Couldn't load activity " + activityPath);
+						System.out.println("Couldn't load .gpx-file " + activityPath);
+						database.insertActivity(new Activity(activityName, type, startActivity, duration, distance));
 					}
 				} else {
-					database.insertActivity(new Activity(activityName, type, startActivity, endActivity, distance));
+					database.insertActivity(new Activity(activityName, type, startActivity, duration, distance));
 				}
 			}
 		}
