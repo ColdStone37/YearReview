@@ -43,7 +43,7 @@ public abstract class AudioDatabaseAdapter {
      * Loads the data of the Adapter and inserts it into the database.
      * @param start start time of data to load
      * @param end end time of data to load
-     * @throws IOException if the all or some of the files can't be read
+     * @throws IOException if the all or some of the files cannot be read
      */
     public abstract void loadData(Instant start, Instant end) throws IOException;
 }
