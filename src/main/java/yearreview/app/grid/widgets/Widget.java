@@ -79,7 +79,7 @@ public abstract class Widget {
 	}
 
 	/**
-	 * Renders the widget in it's local space (meaning that the coordinate system goes from (0, 0) to (w, h)).
+	 * Renders the widget in its local space (meaning that the coordinate system goes from (0, 0) to (w, h)).
 	 *
 	 * @param graphic graphic to render to
 	 * @param time    time to render the widget at

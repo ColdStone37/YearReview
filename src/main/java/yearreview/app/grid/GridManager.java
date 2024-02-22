@@ -1,9 +1,9 @@
 package yearreview.app.grid;
 
-import yearreview.app.config.ConfigNode;
 import yearreview.app.config.GlobalSettings;
 import yearreview.app.grid.widgets.Widget;
 import yearreview.app.grid.widgets.WidgetFactory;
+import yearreview.app.util.xml.XmlNode;
 
 import java.util.*;
 
@@ -29,16 +29,16 @@ public class GridManager implements Iterable<Widget> {
 	/**
 	 * Constructs a {@link GridManager} from a given configuration.
 	 *
-	 * @param gridConfig confguration of the grid
+	 * @param gridConfig configuration of the grid
 	 */
-	public GridManager(ConfigNode gridConfig) {
+	public GridManager(XmlNode gridConfig) {
 		// Calculate scaling values
 		xScale = ((float) GlobalSettings.getRenderWidth() - GlobalSettings.getScaledGridOuterSpacing() * 2f + (float) GlobalSettings.getScaledGridInnerSpacing()) / (float) GlobalSettings.getGridWidth();
 		yScale = ((float) GlobalSettings.getRenderHeight() - GlobalSettings.getScaledGridOuterSpacing() * 2f + (float) GlobalSettings.getScaledGridInnerSpacing()) / (float) GlobalSettings.getGridHeight();
 
 		// Creating the widgets
-		widgets = new ArrayList<Widget>();
-		for (ConfigNode widgetConfig : gridConfig) {
+		widgets = new ArrayList<>();
+		for (XmlNode widgetConfig : gridConfig) {
 			widgetConfig.assertAttributesExist("x", "y", "w", "h");
 			int x = Integer.parseInt(widgetConfig.getAttributeByName("x"));
 			int y = Integer.parseInt(widgetConfig.getAttributeByName("y"));
@@ -49,7 +49,10 @@ public class GridManager implements Iterable<Widget> {
 			WidgetPosition wPos = transform(x, y, w, h);
 
 			// Add the widget
-			widgets.add(WidgetFactory.getWidget(wPos.x, wPos.y, wPos.w, wPos.h, widgetConfig));
+			Widget newWidget = WidgetFactory.getWidget(wPos.x, wPos.y, wPos.w, wPos.h, widgetConfig);
+			if (newWidget == null)
+				throw new Error("Widget " + widgetConfig.getName() + " isn't valid.");
+			widgets.add(newWidget);
 		}
 	}
 
@@ -59,8 +62,8 @@ public class GridManager implements Iterable<Widget> {
 	 * @param x x-position of the widget in grid space
 	 * @param y y-position of the widget in grid space
 	 * @param w width of the widget in grid space
-	 * @param h height of the widet in grid space
-	 * @return new dimensions bundeled in {@link WidgetPosition}-object
+	 * @param h height of the widget in grid space
+	 * @return new dimensions bundled in {@link WidgetPosition}-object
 	 */
 	private WidgetPosition transform(int x, int y, int w, int h) {
 		float x_f = x * xScale;
@@ -78,8 +81,18 @@ public class GridManager implements Iterable<Widget> {
 	 * Class to store the dimensions of a widget in screen space.
 	 */
 	private static class WidgetPosition {
+		/**
+		 * Position and size of the widget.
+		 */
 		final float x, y, w, h;
 
+		/**
+		 * Constructs a new Widget with the given position and size.
+		 * @param x x-position
+		 * @param y y-position
+		 * @param w width
+		 * @param h height
+		 */
 		protected WidgetPosition(float x, float y, float w, float h) {
 			this.x = x;
 			this.y = y;

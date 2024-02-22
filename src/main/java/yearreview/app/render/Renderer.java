@@ -31,11 +31,15 @@ public class Renderer {
 	 * The Graphics object used for rendering.
 	 */
 	private final Graphics2D graphics;
-
+	/**
+	 * The {@link GridManager} used to get the {@link Widget widgets}.
+	 */
 	private final GridManager grid;
 
 	/**
 	 * Default Constructor for a Renderer.
+	 *
+	 * @param grid manager to get the widgets from
 	 */
 	public Renderer(GridManager grid) {
 		renderWidth = GlobalSettings.getRenderWidth();
@@ -51,7 +55,7 @@ public class Renderer {
 	 */
 	public void renderVideo() {
 		VideoWorker v = new VideoWorker();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1000; i++) {
 			renderFrame(i);
 			v.writeFrame(renderingSurface);
 		}

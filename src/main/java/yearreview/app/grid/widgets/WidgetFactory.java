@@ -1,6 +1,6 @@
 package yearreview.app.grid.widgets;
 
-import yearreview.app.config.ConfigNode;
+import yearreview.app.util.xml.XmlNode;
 
 /**
  * Factory for Widget objects.
@@ -18,7 +18,7 @@ public abstract class WidgetFactory {
 	 * @param config configuration of the widget
 	 * @return requested widget or null if the configuration is invalid
 	 */
-	public static Widget getWidget(float x, float y, float w, float h, ConfigNode config) {
+	public static Widget getWidget(float x, float y, float w, float h, XmlNode config) {
 		switch (config.getName()) {
 			case "Test":
 				return new TestWidget(x, y, w, h, config);

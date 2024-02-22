@@ -1,6 +1,10 @@
 package yearreview.app.config;
 
+import io.jenetics.jpx.Length;
+
 import java.awt.Color;
+import java.io.File;
+import java.nio.file.Path;
 import java.time.Instant;
 
 /**
@@ -10,7 +14,11 @@ import java.time.Instant;
  */
 public abstract class GlobalSettings {
 	/**
-	 * Strores the name of the output video file. (Default: out.mp4)
+	 * Stores the path to the configuration file. (Used to construct relative paths)
+	 */
+	private static Path inputPath;
+	/**
+	 * Stores the name of the output video file. (Default: out.mp4)
 	 */
 	private static String outputFilename = "out.mp4";
 	/**
@@ -68,6 +76,25 @@ public abstract class GlobalSettings {
 	 * Spacing in pixels between the {@link yearreview.app.grid.widgets.Widget widgets} and the border of the video. (Default: 15)
 	 */
 	private static int gridOuterSpacing = 15;
+
+	/**
+	 * Minimum size for covers downloaded for {@link yearreview.app.data.sources.audio.database.AudioPiece AudioPieces}.
+	 */
+	private static int audioMinCoverResolution = 200;
+
+	/**
+	 * Unit used for all length. (Default: {@link Length.Unit#METER})
+	 */
+	private static Length.Unit lengthUnit = Length.Unit.KILOMETER;
+
+	/**
+	 * Sets the filename of the input file.
+	 *
+	 * @param filename name of the input file
+	 */
+	protected static void setInputFilename(String filename) {
+		inputPath = new File(filename).toPath().getParent();
+	}
 
 	/**
 	 * Sets the name of the output file.
@@ -218,6 +245,33 @@ public abstract class GlobalSettings {
 	}
 
 	/**
+	 * Sets the minimum resolution for covers downloaded for {@link yearreview.app.data.sources.audio.database.AudioPiece AudioPieces}
+	 *
+	 * @param resolution minimum resolution
+	 */
+	protected static void setAudioMinCoverResolution(int resolution) {
+		audioMinCoverResolution = resolution;
+	}
+
+	/**
+	 * Sets the length unit to use.
+	 * @param unit unit to use
+	 */
+	protected static void setLengthUnit(Length.Unit unit) {
+		lengthUnit = unit;
+	}
+
+	/**
+	 * Gets a relative path from the config file.
+	 *
+	 * @param file file to construct a relative path for
+	 * @return file relative from config path
+	 */
+	public static File getRelativePath(String file) {
+		return inputPath.resolve(file).toFile();
+	}
+
+	/**
 	 * Gets the name of the output file of the video.
 	 *
 	 * @return name to be used for the output file
@@ -351,5 +405,23 @@ public abstract class GlobalSettings {
 	 */
 	public static int getScaledGridOuterSpacing() {
 		return gridOuterSpacing * superSampling;
+	}
+
+	/**
+	 * Gets the minimum resolution for covers to be downloaded for {@link yearreview.app.data.sources.audio.database.AudioPiece AudioPieces}.
+	 *
+	 * @return minimum resolution
+	 */
+	public static int getAudioMinCoverResolution() {
+		return audioMinCoverResolution;
+	}
+
+	/**
+	 * Gets the unit used for all lengths.
+	 *
+	 * @return length unit used
+	 */
+	public static Length.Unit getLengthUnit() {
+		return lengthUnit;
 	}
 }

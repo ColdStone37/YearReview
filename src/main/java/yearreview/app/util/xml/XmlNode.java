@@ -1,7 +1,13 @@
-package yearreview.app.config;
+package yearreview.app.util.xml;
 
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -9,13 +15,13 @@ import java.util.*;
  *
  * @author ColdStone37
  */
-public class ConfigNode implements Iterable<ConfigNode> {
+public class XmlNode implements Iterable<XmlNode> {
 	/**
 	 * The node that is wrapped by this object.
 	 */
 	private final Node node;
 	/**
-	 * A Map used to convert the name of a child to it's node directly.
+	 * A Map used to convert the name of a child to its node directly.
 	 */
 	private final HashMap<String, Node> nameToNodeMap;
 
@@ -24,12 +30,12 @@ public class ConfigNode implements Iterable<ConfigNode> {
 	 *
 	 * @param node the node to create the ConfigNode from
 	 */
-	public ConfigNode(Node node) {
+	public XmlNode(Node node) {
 		this.node = node;
 		NodeList subNodes = node.getChildNodes();
 
 		// Inserts every child into the HashMap
-		nameToNodeMap = new HashMap<String, Node>();
+		nameToNodeMap = new HashMap<>();
 		Node c;
 		for (int i = 0; i < subNodes.getLength(); i++) {
 			c = subNodes.item(i);
@@ -53,10 +59,10 @@ public class ConfigNode implements Iterable<ConfigNode> {
 	 * @param name name of the node to get
 	 * @return child with given name or null if such a node doesn't exists
 	 */
-	public ConfigNode getChildByName(String name) {
+	public XmlNode getChildByName(String name) {
 		if (!nameToNodeMap.containsKey(name))
 			return null;
-		return new ConfigNode(nameToNodeMap.get(name));
+		return new XmlNode(nameToNodeMap.get(name));
 	}
 
 	/**
@@ -124,13 +130,12 @@ public class ConfigNode implements Iterable<ConfigNode> {
 			return;
 
 		// Otherwise find the names of the missing nodes and throw an error
-		String missing = "";
+		StringBuilder missing = new StringBuilder();
 		for (int i = 0; i < children.length; i++)
 			if (!contained[i])
-				missing += children[i] + ", ";
+				missing.append(children[i]).append(", ");
 
-		missing = missing.substring(0, missing.length() - 2);
-		throw new Error("Configuration part \"" + node.getNodeName() + "\" lacks children: " + missing);
+		throw new Error("Configuration part \"" + node.getNodeName() + "\" lacks children: " + missing.substring(0, missing.length() - 2));
 	}
 
 	/**
@@ -140,18 +145,17 @@ public class ConfigNode implements Iterable<ConfigNode> {
 	 */
 	public void assertAttributesExist(String... attributes) {
 		NamedNodeMap nnm = node.getAttributes();
-		String missing = "";
+		StringBuilder missing = new StringBuilder();
 		for (String s : attributes)
 			if (nnm.getNamedItem(s) == null)
-				missing += s + ", ";
+				missing.append(s).append(", ");
 
 		// Everything found -> no error
-		if (missing.isEmpty())
+		if (missing.length() == 0)
 			return;
 
 		// Otherwise output the names of the missing nodes in an error
-		missing = missing.substring(0, missing.length() - 2);
-		throw new Error("Configuration part \"" + node.getNodeName() + "\" lacks attributes: " + missing);
+		throw new Error("Configuration part \"" + node.getNodeName() + "\" lacks attributes: " + missing.substring(0, missing.length() - 2));
 	}
 
 	/**
@@ -160,15 +164,30 @@ public class ConfigNode implements Iterable<ConfigNode> {
 	 * @return iterator over all children
 	 */
 	@Override
-	public Iterator<ConfigNode> iterator() {
+	public Iterator<XmlNode> iterator() {
 		NodeList subNodes = node.getChildNodes();
-		ArrayList<ConfigNode> list = new ArrayList<ConfigNode>();
+		ArrayList<XmlNode> list = new ArrayList<>();
 		Node c;
 		for (int i = 0; i < subNodes.getLength(); i++) {
 			c = subNodes.item(i);
 			if (c.getNodeType() == Node.ELEMENT_NODE)
-				list.add(new ConfigNode(c));
+				list.add(new XmlNode(c));
 		}
 		return list.iterator();
+	}
+
+	/**
+	 * Parses a given XML-file and return the root-XmlNode.
+	 * @param f file to parse
+	 * @return root-node of the XML-file
+	 * @throws IOException if the file cannot be loaded
+	 * @throws ParserConfigurationException if the parsed was not configured correctly
+	 * @throws SAXException If the file cannot be parsed
+	 */
+	public static XmlNode parseXmlFile(File f) throws IOException, ParserConfigurationException, SAXException {
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document doc = builder.parse(f);
+		doc.getDocumentElement().normalize();
+		return new XmlNode(doc);
 	}
 }
