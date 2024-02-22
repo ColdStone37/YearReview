@@ -21,7 +21,7 @@ public class XmlNode implements Iterable<XmlNode> {
 	 */
 	private final Node node;
 	/**
-	 * A Map used to convert the name of a child to it's node directly.
+	 * A Map used to convert the name of a child to its node directly.
 	 */
 	private final HashMap<String, Node> nameToNodeMap;
 
@@ -35,7 +35,7 @@ public class XmlNode implements Iterable<XmlNode> {
 		NodeList subNodes = node.getChildNodes();
 
 		// Inserts every child into the HashMap
-		nameToNodeMap = new HashMap<String, Node>();
+		nameToNodeMap = new HashMap<>();
 		Node c;
 		for (int i = 0; i < subNodes.getLength(); i++) {
 			c = subNodes.item(i);
@@ -166,7 +166,7 @@ public class XmlNode implements Iterable<XmlNode> {
 	@Override
 	public Iterator<XmlNode> iterator() {
 		NodeList subNodes = node.getChildNodes();
-		ArrayList<XmlNode> list = new ArrayList<XmlNode>();
+		ArrayList<XmlNode> list = new ArrayList<>();
 		Node c;
 		for (int i = 0; i < subNodes.getLength(); i++) {
 			c = subNodes.item(i);
@@ -176,6 +176,14 @@ public class XmlNode implements Iterable<XmlNode> {
 		return list.iterator();
 	}
 
+	/**
+	 * Parses a given XML-file and return the root-XmlNode.
+	 * @param f file to parse
+	 * @return root-node of the XML-file
+	 * @throws IOException if the file cannot be loaded
+	 * @throws ParserConfigurationException if the parsed was not configured correctly
+	 * @throws SAXException If the file cannot be parsed
+	 */
 	public static XmlNode parseXmlFile(File f) throws IOException, ParserConfigurationException, SAXException {
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = builder.parse(f);

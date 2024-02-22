@@ -1,24 +1,41 @@
 package yearreview.app.data;
 
 import yearreview.app.data.sources.DataSource;
-import yearreview.app.data.sources.DataSourceFactory;
 import yearreview.app.util.xml.XmlNode;
 
 import java.util.*;
 
+/**
+ * Manages all {@link DataSource} by creating them from a given configuration and loading them.
+ *
+ * @author ColdStone37
+ */
 public class DataManager {
-	List<DataSource> sources;
+	/**
+	 * List of DataSources loaded from the configuration.
+	 */
+	private final List<DataSource> sources;
 
+	/**
+	 * Creates a DataManager from a given configuration.
+	 * @param dataConfig configuration
+	 */
 	public DataManager(XmlNode dataConfig) {
-		sources = new ArrayList<DataSource>();
+		// Initialize the DataSources and throw an Error if the configuration is invalid
+		sources = new ArrayList<>();
 		for (XmlNode sourceConfig : dataConfig) {
-			DataSource newSource = DataSourceFactory.getDataSource(sourceConfig);
+			DataSource newSource = DataSource.getDataSource(sourceConfig);
 			if (newSource == null)
 				throw new Error("Data Source " + sourceConfig.getName() + " isn't valid.");
 			sources.add(newSource);
 		}
 	}
 
+	/**
+	 * Gets a DataSource by its tag.
+	 * @param tag tag to search for
+	 * @return the DataSource or null if no DataSource with that tag exists
+	 */
 	public DataSource getSourceByTag(String tag) {
 		for(DataSource source : sources)
 			if(source.tag.equals(tag))
@@ -26,6 +43,9 @@ public class DataManager {
 		return null;
 	}
 
+	/**
+	 * Loads the data of all {@link DataSource DataSources} on multiple Threads.
+	 */
 	public void loadData() {
 		// Start all loading threads
 		for (DataSource source : sources)

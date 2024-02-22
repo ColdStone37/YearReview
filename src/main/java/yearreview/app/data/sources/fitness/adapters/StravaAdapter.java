@@ -56,7 +56,7 @@ public class StravaAdapter extends FitnessAdapter {
 	private final static List<Map<String, ActivityType>> activityStringToType;
 
 	static {
-		activityStringToType = new ArrayList<Map<String, ActivityType>>(1);
+		activityStringToType = new ArrayList<>(1);
 		activityStringToType.add(new HashMap<String, ActivityType>() {{
 			put("Radfahrt", ActivityType.CYCLING);
 			put("Lauf", ActivityType.RUNNING);
@@ -95,7 +95,7 @@ public class StravaAdapter extends FitnessAdapter {
 		File input = GlobalSettings.getRelativePath(dataPath + "/activities.csv");
 
 		// Create a CSVReader from the input-file
-		CSVReader.getLineStream(input).skip(1).forEach(line -> parseCSVLine(line, start, end));
+		CSVReader.getRowStream(input).skip(1).forEach(row -> parseCSVLine(row, start, end));
 	}
 
 	/**

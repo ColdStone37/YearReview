@@ -75,6 +75,10 @@ public class ConfigParser {
 		}
 	}
 
+	/**
+	 * Gets the Command line options.
+	 * @return options with descriptions
+	 */
 	private static Options getOptions() {
 		Options options = new Options();
 

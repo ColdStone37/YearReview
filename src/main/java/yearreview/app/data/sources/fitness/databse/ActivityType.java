@@ -1,5 +1,10 @@
 package yearreview.app.data.sources.fitness.databse;
 
+/**
+ * Enum that describes possible {@link Activity Activities} stored in the {@link FitnessDatabase}.
+ *
+ * @author ColdStone37
+ */
 public enum ActivityType {
 	CYCLING,
 	HIKING,
@@ -7,5 +12,5 @@ public enum ActivityType {
 	RUNNING,
 	BADMINTON,
 	CLIMBING,
-	TRAINING;
+	TRAINING
 }

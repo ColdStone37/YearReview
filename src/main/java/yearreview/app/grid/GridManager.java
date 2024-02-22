@@ -37,7 +37,7 @@ public class GridManager implements Iterable<Widget> {
 		yScale = ((float) GlobalSettings.getRenderHeight() - GlobalSettings.getScaledGridOuterSpacing() * 2f + (float) GlobalSettings.getScaledGridInnerSpacing()) / (float) GlobalSettings.getGridHeight();
 
 		// Creating the widgets
-		widgets = new ArrayList<Widget>();
+		widgets = new ArrayList<>();
 		for (XmlNode widgetConfig : gridConfig) {
 			widgetConfig.assertAttributesExist("x", "y", "w", "h");
 			int x = Integer.parseInt(widgetConfig.getAttributeByName("x"));
@@ -81,8 +81,18 @@ public class GridManager implements Iterable<Widget> {
 	 * Class to store the dimensions of a widget in screen space.
 	 */
 	private static class WidgetPosition {
+		/**
+		 * Position and size of the widget.
+		 */
 		final float x, y, w, h;
 
+		/**
+		 * Constructs a new Widget with the given position and size.
+		 * @param x x-position
+		 * @param y y-position
+		 * @param w width
+		 * @param h height
+		 */
 		protected WidgetPosition(float x, float y, float w, float h) {
 			this.x = x;
 			this.y = y;

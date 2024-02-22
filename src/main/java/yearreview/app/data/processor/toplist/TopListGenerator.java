@@ -1,5 +1,7 @@
 package yearreview.app.data.processor.toplist;
 
+import yearreview.app.util.value.ValueType;
+
 import java.time.Instant;
 import java.util.*;
 
@@ -17,16 +19,22 @@ public class TopListGenerator {
 	 * Length of the TopList to generate.
 	 */
 	private final int topListLength;
+	/**
+	 * Comparator used to sort the {@link TopListElement TopListElements}.
+	 */
+	private final TopListElementComparator comparator;
 
 	/**
 	 * Constructs a new TopListGenerator from an Adapter and a length.
 	 * @param adapter Adapter to use for getting the data from a {@link yearreview.app.data.sources.DataSource}
 	 * @param topListLength Length of the TopList to generate
+	 * @param sortingValue type of {@link yearreview.app.util.value.Value} to sort by
 	 */
-	public TopListGenerator(TopListAdapter adapter, int topListLength) {
+	public TopListGenerator(TopListAdapter adapter, int topListLength, ValueType sortingValue) {
 		this.adapter = adapter;
 		this.topListLength = topListLength;
 		assert(topListLength > 0);
+		comparator = new TopListElementComparator(sortingValue);
 	}
 
 	/**
@@ -39,7 +47,7 @@ public class TopListGenerator {
 		Collection<TopListElement> elements = adapter.getElements(t);
 
 		// TreeSet can be used for sorting since it is a sorted datastructure
-		TreeSet<TopListElement> sorted = new TreeSet<TopListElement>();
+		TreeSet<TopListElement> sorted = new TreeSet<>(comparator);
 
 		// Add all elements to the set and remove to small values to save some performance
 		for(TopListElement elem : elements) {
@@ -49,6 +57,6 @@ public class TopListGenerator {
 		}
 
 		// Created ArrayList from reversed Set
-		return new ArrayList<TopListElement>(sorted.descendingSet());
+		return new ArrayList<>(sorted.descendingSet());
 	}
 }

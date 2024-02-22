@@ -1,14 +1,19 @@
 package yearreview.app.data.processor.toplist;
 
 import yearreview.app.util.value.Value;
+import yearreview.app.util.value.ValueType;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * A TopListElement contains a {@link TopListCompatibleItem} and it's associated {@link Value}.
- * The {@link Value} can be updated using the {@link TopListElement#addValue}-function to make implementing the {@link TopListAdapter adapters} easier.
+ * A TopListElement contains a {@link TopListCompatibleItem} and it's associated {@link Value Values}.
+ * The {@link Value Values} can be updated using the {@link TopListElement#addValue}-function to make implementing the {@link TopListAdapter adapters} easier.
  *
  * @author ColdStone37
  */
-public class TopListElement implements Comparable<TopListElement> {
+public class TopListElement {
 	/**
 	 * Counts the TopListElements already in existence.
 	 */
@@ -22,9 +27,9 @@ public class TopListElement implements Comparable<TopListElement> {
 	 */
 	private final TopListCompatibleItem item;
 	/**
-	 * Value of the element, used for sorting and displaying.
+	 * Values of the element, used for sorting and displaying.
 	 */
-	private Value value;
+	private final Map<ValueType, Value> values;
 
 	/**
 	 * Constructs a TopListElement from an item and a Value.
@@ -35,23 +40,38 @@ public class TopListElement implements Comparable<TopListElement> {
 		id = count;
 		count++;
 		this.item = item;
-		this.value = value;
+		values = new HashMap<>();
+		values.put(value.getType(), value);
 	}
 
 	/**
-	 * Adds a given Value to the internal Value of the element.
+	 * Constructs a TopListElement from an item and a list of Values.
+	 * @param item item to get information from
+	 * @param values Values to associate to the item
+	 */
+	public TopListElement(TopListCompatibleItem item, List<Value> values) {
+		id = count;
+		count++;
+		this.item = item;
+		this.values = new HashMap<>();
+		for(Value v:values)
+			this.values.put(v.getType(), v);
+	}
+
+	/**
+	 * Adds a given Value to the internal Value of that type.
 	 * @param value Value to add to internal Value
 	 */
 	public void addValue(Value value) {
-		this.value = this.value.plus(value);
+		values.compute(value.getType(), (k, v) -> (v == null) ? null : v.plus(value));
 	}
 
 	/**
-	 * Gets the Value associated to the item.
-	 * @return associated Value
+	 * Gets the Value associated to the item with a certain type.
+	 * @return associated Value or null if no Value of that type exists
 	 */
-	public Value getValue() {
-		return value;
+	public Value getValue(ValueType type) {
+		return values.get(type);
 	}
 
 	/**
@@ -60,21 +80,5 @@ public class TopListElement implements Comparable<TopListElement> {
 	 */
 	public TopListCompatibleItem getItem() {
 		return item;
-	}
-
-	/**
-	 * Needed to implement the {@link Comparable}-interface. Compares elements by value at first. If both items have the same value they are compared by their {@link TopListCompatibleItem#getMainText mainText}.
-	 * @param other TopListElement to compare against
-	 * @return negative value if <code>this &lt; other</code>, positive value if <code>this &gt; other</code>
-	 */
-	@Override
-	public int compareTo(TopListElement other) {
-		// First compare by Value
-		int valCompare = value.compareTo(other.getValue());
-		if(valCompare != 0)
-			return valCompare;
-
-		// If the values are the same compare by MainText
-		return item.getMainText().compareTo(other.getItem().getMainText());
 	}
 }
