@@ -60,8 +60,7 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
                 // Create Stream of JsonObjects from Array, filter them by time and process them in parseJsonObject-function
                 parser.getArrayStream()
                         .map(JsonValue::asJsonObject)
-                        .filter(e->isBetween(Instant.parse(e.getString("ts")), start, end))
-                        .forEach(this::processJsonObject);
+                        .forEach(e -> processJsonObject( e, start, end));
             }
         }
     }
@@ -70,8 +69,10 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
      * Processes a JsonObject from the Stream and inserts it into the database.
      * @param object object to process
      */
-    private void processJsonObject(JsonObject object) {
+    private void processJsonObject(JsonObject object, Instant start, Instant end) {
         Instant time = Instant.parse(object.getString("ts"));
+        if(!isBetween(time, start, end))
+            return;
         Duration duration = Duration.ofMillis(object.getInt("ms_played"));
         if(!object.isNull("master_metadata_track_name")) {
             // Object is a song
