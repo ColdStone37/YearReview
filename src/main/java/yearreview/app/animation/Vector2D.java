@@ -47,4 +47,33 @@ public class Vector2D {
 	public String toString() {
 		return "(" + x + ", " + y + ")";
 	}
+
+	/**
+	 * Gets a normalized version of this vector.
+	 * If this vectors x and y values are zero a vector facing to the right is returned.
+	 * @return vector of length 1 facing the same direction
+	 */
+	public Vector2D getNormalized() {
+		if(x == 0 && y == 0)
+			return new Vector2D(1.0f, 0.0f);
+		float length = (float)Math.sqrt(x * x + y * y);
+		return new Vector2D(x / length, y / length);
+	}
+
+	/**
+	 * Gets a inverted version of this vector (-x, -y).
+	 * @return inverted vector
+	 */
+	public Vector2D getInverted() {
+		return new Vector2D(-x, -y);
+	}
+
+	/**
+	 * Returns a new vector which is the result of the other vector added to this vector.
+	 * @param other vector to add
+	 * @return new vector representing the sum of both vectors
+	 */
+	public Vector2D add(Vector2D other) {
+		return new Vector2D(x + other.x, y + other.y);
+	}
 }
