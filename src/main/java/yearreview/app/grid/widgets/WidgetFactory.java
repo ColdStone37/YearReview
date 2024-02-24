@@ -22,6 +22,8 @@ public abstract class WidgetFactory {
 		switch (config.getName()) {
 			case "Test":
 				return new TestWidget(x, y, w, h, config);
+			case "TestAnimation":
+				return new TestWidgetAnimation(x, y, w, h, config);
 		}
 		return null;
 	}

@@ -73,7 +73,7 @@ public class Vector2D {
 	 * @param other vector to add
 	 * @return new vector representing the sum of both vectors
 	 */
-	public Vector2D add(Vector2D other) {
+	public Vector2D plus(Vector2D other) {
 		return new Vector2D(x + other.x, y + other.y);
 	}
 }

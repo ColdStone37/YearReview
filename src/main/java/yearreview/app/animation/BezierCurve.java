@@ -1,6 +1,7 @@
 package yearreview.app.animation;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A Bezier-Curve used for calculation of smooth animations.
@@ -20,6 +21,17 @@ public class BezierCurve {
 	public BezierCurve(Vector2D... controlPoints) {
 		assert(controlPoints.length >= 2);
 		this.controlPoints = controlPoints;
+	}
+
+	/**
+	 * Constructs a new BezierCurve from a list of Control Points.
+	 * @param controlPoints control points of the Bezier
+	 */
+	public BezierCurve(List<Vector2D> controlPoints) {
+		assert(controlPoints.size() >= 2);
+		this.controlPoints = new Vector2D[controlPoints.size()];
+		for(int i = 0; i < controlPoints.size(); i++)
+			this.controlPoints[i] = controlPoints.get(i);
 	}
 
 	/**
