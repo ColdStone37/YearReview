@@ -48,4 +48,12 @@ public class BezierCurve {
 
 		return copiedPoints[0];
 	}
+
+	public Vector2D getStart() {
+		return controlPoints[0];
+	}
+
+	public Vector2D getEnd() {
+		return controlPoints[controlPoints.length-1];
+	}
 }

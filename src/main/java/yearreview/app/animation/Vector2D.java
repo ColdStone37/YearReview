@@ -7,6 +7,12 @@ package yearreview.app.animation;
  * @author ColdStone37
  */
 public class Vector2D {
+	public final static Vector2D UP = new Vector2D(0f, -1f);
+	public final static Vector2D RIGHT = new Vector2D(1f, 0f);
+	public final static Vector2D DOWN = new Vector2D(0f, 1f);
+	public final static Vector2D LEFT = new Vector2D(-1f, 0f);
+
+
 	/**
 	 * X-value of the Vector.
 	 */
@@ -60,6 +66,20 @@ public class Vector2D {
 		return new Vector2D(x / length, y / length);
 	}
 
+	public Vector2D setLength(float l) {
+		return getNormalized().getScaled(l);
+	}
+
+	public Vector2D getScaled(float scale) {
+		if(scale == 1f)
+			return this;
+		return new Vector2D(x * scale, y * scale);
+	}
+
+	public float getLength() {
+		return (float) Math.sqrt(x * x + y * y);
+	}
+
 	/**
 	 * Gets a inverted version of this vector (-x, -y).
 	 * @return inverted vector
@@ -75,5 +95,9 @@ public class Vector2D {
 	 */
 	public Vector2D plus(Vector2D other) {
 		return new Vector2D(x + other.x, y + other.y);
+	}
+
+	public Vector2D minus(Vector2D other) {
+		return new Vector2D(x - other.x, y - other.y);
 	}
 }

@@ -41,4 +41,9 @@ public class BezierControlPoint {
 		controlPoints.add(p2.pos);
 		return new BezierCurve(controlPoints);
 	}
+
+	@Override
+	public String toString() {
+		return "pos: " + pos + " dir: " + dir;
+	}
 }

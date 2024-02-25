@@ -1,9 +1,13 @@
 package yearreview.app.grid.widgets;
 
+import yearreview.app.animation.AnimatedNumber;
 import yearreview.app.animation.AnimationCurve;
 import yearreview.app.util.xml.XmlNode;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.time.Duration;
 import java.time.Instant;
 
 /**
@@ -12,9 +16,10 @@ import java.time.Instant;
  * @author ColdStone37
  */
 public class TestWidgetAnimation extends Widget {
-	public final static int ANIMATION_TIME = 200;
-	public final static int ANIMATION_WAIT = 30;
+	public Duration ANIMATION_DURATION = Duration.ofMillis(750);
+	public final static int ANIMATION_FRAME_COUNT = 90;
 	private int frameCount = 0;
+	private List<AnimatedNumber> animations;
 
 	private final static Font FONT = new Font("Monospaced", Font.PLAIN, 15);
 
@@ -29,6 +34,11 @@ public class TestWidgetAnimation extends Widget {
 	 */
 	public TestWidgetAnimation(float x, float y, float w, float h, XmlNode c) {
 		super(x, y, w, h);
+		animations = new ArrayList<>(4);
+		animations.add(new AnimatedNumber(0f, AnimationCurve.EASE_IN_OUT));
+		animations.add(new AnimatedNumber(0f, AnimationCurve.EASE_IN));
+		animations.add(new AnimatedNumber(0f, AnimationCurve.EASE_OUT));
+		animations.add(new AnimatedNumber(0f, AnimationCurve.LINEAR));
 	}
 
 	/**
@@ -39,17 +49,29 @@ public class TestWidgetAnimation extends Widget {
 	 */
 	@Override
 	protected void renderLocalSpace(Graphics2D g, Instant time) {
+		// Animation
+		if(frameCount % ANIMATION_FRAME_COUNT == 0) {
+			if(frameCount % (ANIMATION_FRAME_COUNT * 2) == 0){
+				for(AnimatedNumber num : animations)
+					num.animateTo(h/2, ANIMATION_DURATION);
+			} else {
+				for(AnimatedNumber num : animations)
+					num.animateTo(0f, ANIMATION_DURATION);
+			}
+		}
+
+		// Background
 		g.setColor(Color.BLUE);
 		g.fillRect(0, 0, (int) w, (int) h);
 
-		float curvePosition = (float) Math.min(frameCount % (ANIMATION_TIME+ANIMATION_WAIT), ANIMATION_TIME) / (float) ANIMATION_TIME;
-
 		// Render dots
-		g.setColor(Color.GREEN);
-		g.fillOval((int)(w/5f-h/16f), (int)(h/4f-h/16f) + (int)(AnimationCurve.EASE_IN_OUT.sampleCurve(curvePosition) * h/2), (int)h/8, (int)h/8);
-		g.fillOval((int)((2f*w)/5f-h/16f), (int)(h/4f-h/16f) + (int)(AnimationCurve.EASE_IN.sampleCurve(curvePosition) * h/2), (int)h/8, (int)h/8);
-		g.fillOval((int)((3f*w)/5f-h/16f), (int)(h/4f-h/16f) + (int)(AnimationCurve.EASE_OUT.sampleCurve(curvePosition) * h/2), (int)h/8, (int)h/8);
-		g.fillOval((int)((4f*w)/5f-h/16f), (int)(h/4f-h/16f) + (int)(AnimationCurve.LINEAR.sampleCurve(curvePosition) * h/2), (int)h/8, (int)h/8);
+		if(frameCount % (ANIMATION_FRAME_COUNT * 2) < ANIMATION_FRAME_COUNT) {
+			g.setColor(Color.GREEN);
+		} else {
+			g.setColor(Color.RED);
+		}
+		for(int i = 0; i < 4; i ++)
+			g.fillOval((int)(((i+1)*w)/5f-h/16f), (int)(h/4f-h/16f) + (int)(animations.get(i).floatValue()), (int)h/8, (int)h/8);
 
 		// Render text descriptions
 		g.setColor(Color.BLACK);
