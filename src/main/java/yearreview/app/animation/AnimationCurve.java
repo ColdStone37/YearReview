@@ -78,7 +78,7 @@ public class AnimationCurve {
 			Vector2D v1 = curve.samplePoint(min);
 			Vector2D v2 = curve.samplePoint(max);
 
-			return v2.minus(v1).getScaled(1f / BINARY_SEARCH_PRECISION);
+			return v2.minus(v1).getNormalized();
 		}
 
 		if(curve.samplePoint(mid).x > xVal) {
@@ -128,5 +128,9 @@ public class AnimationCurve {
 				return false;
 		}
 		return true;
+	}
+
+	public boolean isNormalized() {
+		return posStart.x == 0f && posStart.y == 0f && posEnd.x == 1f && posEnd.y == 1f;
 	}
 }
