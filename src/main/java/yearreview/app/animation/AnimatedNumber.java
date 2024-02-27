@@ -57,13 +57,14 @@ public class AnimatedNumber extends Number {
 	/**
 	 * Constructs an AnimatedNumber from a starting value and AnimationCurve.
 	 * @param initialVal initial Value of the AnimatedNumber
-	 * @param defaultCurve curve to use for animations if no curve is specified
+	 * @param defaultCurve curve to use for animations if no curve is specified (has to be {@link AnimationCurve#isNormalized() normalized})
 	 */
 	public AnimatedNumber(float initialVal, AnimationCurve defaultCurve) {
 		value = initialVal;
 		animationStart = initialVal;
 		animationEnd = initialVal;
 		curve = AnimationCurve.LINEAR;
+		assert(defaultCurve.isNormalized());
 		this.defaultCurve = defaultCurve;
 		totalAnimationDurationMs = (int) GlobalSettings.getAnimationDuration().toMillis();
 		remainingAnimationDurationMs = 0;
@@ -109,9 +110,11 @@ public class AnimatedNumber extends Number {
 	 * Animated the value to a given new value with a certain animation duration and AnimationCurve.
 	 * @param newValue new value to animate to
 	 * @param d duration of animation to the new value
-	 * @param c curve to use for the animation to the new value
+	 * @param c curve to use for the animation to the new value (has to be {@link AnimationCurve#isNormalized() normalized})
 	 */
 	public void animateTo(float newValue, Duration d, AnimationCurve c) {
+		assert(c.isNormalized());
+
 		// To avoid division by zero
 		if(value == newValue)
 			value += 0.001f;
