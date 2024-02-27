@@ -1,5 +1,6 @@
 package yearreview.app.render;
 
+import yearreview.app.animation.AnimationManager;
 import yearreview.app.config.GlobalSettings;
 import yearreview.app.grid.GridManager;
 import yearreview.app.grid.widgets.Widget;
@@ -55,9 +56,10 @@ public class Renderer {
 	 */
 	public void renderVideo() {
 		VideoWorker v = new VideoWorker();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 500; i++) {
 			renderFrame(i);
 			v.writeFrame(renderingSurface);
+			AnimationManager.updateAnimations(1000 / GlobalSettings.getVideoFramerate());
 		}
 		v.end();
 	}

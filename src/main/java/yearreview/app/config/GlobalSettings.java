@@ -5,6 +5,7 @@ import io.jenetics.jpx.Length;
 import java.awt.Color;
 import java.io.File;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 
 /**
@@ -86,6 +87,11 @@ public abstract class GlobalSettings {
 	 * Unit used for all length. (Default: {@link Length.Unit#METER})
 	 */
 	private static Length.Unit lengthUnit = Length.Unit.KILOMETER;
+
+	/**
+	 * Duration of all Animations happening in the video. (Default: 750ms)
+	 */
+	private static Duration animationDuration = Duration.ofMillis(750);
 
 	/**
 	 * Sets the filename of the input file.
@@ -262,6 +268,14 @@ public abstract class GlobalSettings {
 	}
 
 	/**
+	 * Sets the Duration of all animations.
+	 * @param d  duration of the animations
+	 */
+	protected static void setAnimationDuration(Duration d) {
+		animationDuration = d;
+	}
+
+	/**
 	 * Gets a relative path from the config file.
 	 *
 	 * @param file file to construct a relative path for
@@ -423,5 +437,13 @@ public abstract class GlobalSettings {
 	 */
 	public static Length.Unit getLengthUnit() {
 		return lengthUnit;
+	}
+
+	/**
+	 * Gets the duration of all animations.
+	 * @return duration of animations
+	 */
+	public static Duration getAnimationDuration() {
+		return animationDuration;
 	}
 }

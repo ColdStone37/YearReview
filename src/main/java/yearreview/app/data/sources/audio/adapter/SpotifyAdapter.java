@@ -60,8 +60,7 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
                 // Create Stream of JsonObjects from Array, filter them by time and process them in parseJsonObject-function
                 parser.getArrayStream()
                         .map(JsonValue::asJsonObject)
-                        .filter(e->isBetween(Instant.parse(e.getString("ts")), start, end))
-                        .forEach(this::processJsonObject);
+                        .forEach(e -> processJsonObject( e, start, end));
             }
         }
     }
@@ -69,9 +68,13 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
     /**
      * Processes a JsonObject from the Stream and inserts it into the database.
      * @param object object to process
+     * @param start start time of data to load
+     * @param end end time of data to load
      */
-    private void processJsonObject(JsonObject object) {
+    private void processJsonObject(JsonObject object, Instant start, Instant end) {
         Instant time = Instant.parse(object.getString("ts"));
+        if(!isBetween(time, start, end))
+            return;
         Duration duration = Duration.ofMillis(object.getInt("ms_played"));
         if(!object.isNull("master_metadata_track_name")) {
             // Object is a song
@@ -81,7 +84,7 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
             // Album
             AudioData album = database.getData(object.getString("master_metadata_album_album_name"), AudioData.Type.ALBUM);
 
-            List<AudioData> songData = new ArrayList<AudioData>(2);
+            List<AudioData> songData = new ArrayList<>(2);
             songData.add(artist);
             songData.add(album);
 
@@ -98,7 +101,7 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
                 // Podcast
                 AudioData podcast = database.getData(object.getString("episode_show_name"), AudioData.Type.PODCAST);
 
-                List<AudioData> episodeData = new ArrayList<AudioData>(2);
+                List<AudioData> episodeData = new ArrayList<>(2);
                 episodeData.add(podcast);
 
                 // Episode

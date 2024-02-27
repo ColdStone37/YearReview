@@ -84,7 +84,7 @@ public class StravaAdapter extends FitnessAdapter {
 	}
 
 	/**
-	 * Load the Activities from Strava by parsing the activities.csv-file inside the CSV.
+	 * Load the Activities from Strava by parsing the activities.csv-file inside the export-folder.
 	 * @param start start time of data to load
 	 * @param end end time of data to load
 	 * @throws IOException if the {@link CSVReader} cannot read the file
