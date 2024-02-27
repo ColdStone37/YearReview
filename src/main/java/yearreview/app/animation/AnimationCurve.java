@@ -12,19 +12,19 @@ public class AnimationCurve {
 	/**
 	 * A Curve for linear animations.
 	 */
-	public final static AnimationCurve LINEAR = new AnimationCurve(new BezierControlPoint(0f, 0f), new BezierControlPoint(1f, 1f));
+	public final static AnimationCurve LINEAR = new AnimationCurve(new AnimationCurveControlPoint(0f, 0f), new AnimationCurveControlPoint(1f, 1f));
 	/**
 	 * A Curve for ease-in-out animations.
 	 */
-	public final static AnimationCurve EASE_IN_OUT = new AnimationCurve(new BezierControlPoint(0f, 0f, 0.5f, 0f), new BezierControlPoint(1f, 1f, 0.5f, 0f));
+	public final static AnimationCurve EASE_IN_OUT = new AnimationCurve(new AnimationCurveControlPoint(0f, 0f, 0.5f, 0f), new AnimationCurveControlPoint(1f, 1f, 0.5f, 0f));
 	/**
 	 * A Curve for ease-in animations.
 	 */
-	public final static AnimationCurve EASE_IN = new AnimationCurve(new BezierControlPoint(0f, 0f, 0.5f, 0f), new BezierControlPoint(1f, 1f));
+	public final static AnimationCurve EASE_IN = new AnimationCurve(new AnimationCurveControlPoint(0f, 0f, 0.5f, 0f), new AnimationCurveControlPoint(1f, 1f));
 	/**
 	 * A Curve for ease-out animations.
 	 */
-	public final static AnimationCurve EASE_OUT = new AnimationCurve(new BezierControlPoint(0f, 0f), new BezierControlPoint(1f, 1f, 0.5f, 0f));
+	public final static AnimationCurve EASE_OUT = new AnimationCurve(new AnimationCurveControlPoint(0f, 0f), new AnimationCurveControlPoint(1f, 1f, 0.5f, 0f));
 	/**
 	 * Precision of the binary search when finding a certain x-value of a {@link BezierCurve}.
 	 */
@@ -42,7 +42,7 @@ public class AnimationCurve {
 	 */
 	private final Vector2D posEnd;
 	/**
-	 * Whether the animation can continue another animation. True if the first {@link BezierControlPoint} has a handle.
+	 * Whether the animation can continue another animation. True if the first {@link AnimationCurveControlPoint} has a handle.
 	 */
 	private final boolean canContinue;
 	/**
@@ -50,15 +50,16 @@ public class AnimationCurve {
 	 */
 	private final boolean isNormalized;
 	/**
-	 * BezierControlPoints used to initially create the curve. Only stored if the Curve {@link this#canContinue} a previous animation.
+	 * BezierControlPoints used to initially create the curve. Only stored if the Curve {@link AnimationCurve#canContinue} a previous animation.
 	 */
-	private final BezierControlPoint[] controlPoints;
+	private final AnimationCurveControlPoint[] controlPoints;
 
 	/**
 	 * Constructs a AnimationCurve from a set of Control-Points.
+	 * A {@link BezierCurve} will be put between each of the {@link AnimationCurveControlPoint Control-Points}.
 	 * @param controlPoints Control-Points to construct the Curve
 	 */
-	public AnimationCurve(BezierControlPoint... controlPoints) {
+	public AnimationCurve(AnimationCurveControlPoint... controlPoints) {
 		if(!validateControlPoints(controlPoints))
 			throw new Error("Invalid configuration of AnimationCurve");
 		canContinue = controlPoints[0].hasHandle();
@@ -72,7 +73,7 @@ public class AnimationCurve {
 		posEnd = controlPoints[controlPoints.length-1].pos;
 		isNormalized = (posStart.x == 0f && posStart.y == 0f && posEnd.x == 1f && posEnd.y == 1f);
 		for(int i = 0; i < controlPoints.length-1; i++)
-			curves.put(controlPoints[i].pos.x, BezierControlPoint.constructBezierBetween(controlPoints[i], controlPoints[i+1]));
+			curves.put(controlPoints[i].pos.x, AnimationCurveControlPoint.constructBezierBetween(controlPoints[i], controlPoints[i+1]));
 	}
 
 	/**
@@ -84,15 +85,19 @@ public class AnimationCurve {
 		if(!canContinue)
 			return this;
 
-		BezierControlPoint[] newControlPoints = new BezierControlPoint[controlPoints.length];
+		AnimationCurveControlPoint[] newControlPoints = new AnimationCurveControlPoint[controlPoints.length];
 		Vector2D bezierDir = slope;
 
 		bezierDir = bezierDir.getScaled(Math.min(bezierDir.x, controlPoints[1].pos.x - controlPoints[0].pos.x - (controlPoints[1].hasHandle() ? controlPoints[1].dir.x : 0f)) / bezierDir.x);
-		newControlPoints[0] = new BezierControlPoint(controlPoints[0].pos, bezierDir);
+		newControlPoints[0] = new AnimationCurveControlPoint(controlPoints[0].pos, bezierDir);
 		System.arraycopy(controlPoints, 1, newControlPoints, 1, newControlPoints.length - 1);
 		return new AnimationCurve(newControlPoints);
 	}
 
+	/**
+	 * Gets whether this AnimationCurve can continue another AnimationCurve by rotating the first {@link AnimationCurveControlPoint}.
+	 * @return true if this AnimationCurve can continue another AnimationCurve
+	 */
 	public boolean canContinue() {
 		return canContinue;
 	}
@@ -179,13 +184,13 @@ public class AnimationCurve {
 
 	/**
 	 * Validates the Control-Points of an AnimationCurve. The following has to be true for a valid AnimationCurve:
-	 * - Atleast two {@link BezierControlPoint}
-	 * - A BezierControlPoint b2 following a BezierControlPoint b1 has to have a higher x-value than b1: b1.pos.x <= b2.pos.x
-	 * - If atleast one of the BezierControlPoints has handles also b1.pos.x + b1.dir.x <= b2.pos.x - b2.dir.x has to be fulfilled
+	 * - Atleast two {@link AnimationCurveControlPoint}
+	 * - A BezierControlPoint b2 following a BezierControlPoint b1 has to have a higher x-value than b1: b1.pos.x &lt;= b2.pos.x
+	 * - If atleast one of the BezierControlPoints has handles also b1.pos.x + b1.dir.x &lt;= b2.pos.x - b2.dir.x has to be fulfilled
 	 * @param controlPoints Control-Points to validate
 	 * @return true if they are valid Control-Points for an AnimationCurve, false otherwise
 	 */
-	private static boolean validateControlPoints(BezierControlPoint[] controlPoints) {
+	private static boolean validateControlPoints(AnimationCurveControlPoint[] controlPoints) {
 		int n = controlPoints.length;
 
 		// There have to be atleast 2 Control-Points

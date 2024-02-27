@@ -10,13 +10,13 @@ import java.util.List;
  */
 public class BezierCurve {
 	/**
-	 * Array of controlPoints of the curve.
+	 * Array of Control-Points of the curve.
 	 */
 	private final Vector2D[] controlPoints;
 
 	/**
-	 * Constructs a new BezierCurve from atleast two Control Points.
-	 * @param controlPoints control points of the Bezier
+	 * Constructs a new BezierCurve from atleast two Control-Points.
+	 * @param controlPoints Control-Points of the Bezier
 	 */
 	public BezierCurve(Vector2D... controlPoints) {
 		assert(controlPoints.length >= 2);
@@ -24,8 +24,8 @@ public class BezierCurve {
 	}
 
 	/**
-	 * Constructs a new BezierCurve from a list of Control Points.
-	 * @param controlPoints control points of the Bezier
+	 * Constructs a new BezierCurve from a list of Control-Points.
+	 * @param controlPoints Control-Points of the Bezier
 	 */
 	public BezierCurve(List<Vector2D> controlPoints) {
 		assert(controlPoints.size() >= 2);
@@ -49,10 +49,18 @@ public class BezierCurve {
 		return copiedPoints[0];
 	}
 
+	/**
+	 * Gets the first Control-Point of the Bezier.
+	 * @return first Control-Point
+	 */
 	public Vector2D getStart() {
 		return controlPoints[0];
 	}
 
+	/**
+	 * Gets the last Control-Point of the Bezier.
+	 * @return last Control-Point
+	 */
 	public Vector2D getEnd() {
 		return controlPoints[controlPoints.length-1];
 	}

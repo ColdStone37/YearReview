@@ -68,6 +68,7 @@ public class TopListElement {
 
 	/**
 	 * Gets the Value associated to the item with a certain type.
+	 * @param type type of Value to get from the element
 	 * @return associated Value or null if no Value of that type exists
 	 */
 	public Value getValue(ValueType type) {

@@ -68,6 +68,8 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
     /**
      * Processes a JsonObject from the Stream and inserts it into the database.
      * @param object object to process
+     * @param start start time of data to load
+     * @param end end time of data to load
      */
     private void processJsonObject(JsonObject object, Instant start, Instant end) {
         Instant time = Instant.parse(object.getString("ts"));
@@ -82,7 +84,7 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
             // Album
             AudioData album = database.getData(object.getString("master_metadata_album_album_name"), AudioData.Type.ALBUM);
 
-            List<AudioData> songData = new ArrayList<AudioData>(2);
+            List<AudioData> songData = new ArrayList<>(2);
             songData.add(artist);
             songData.add(album);
 
@@ -99,7 +101,7 @@ public class SpotifyAdapter extends AudioDatabaseAdapter {
                 // Podcast
                 AudioData podcast = database.getData(object.getString("episode_show_name"), AudioData.Type.PODCAST);
 
-                List<AudioData> episodeData = new ArrayList<AudioData>(2);
+                List<AudioData> episodeData = new ArrayList<>(2);
                 episodeData.add(podcast);
 
                 // Episode

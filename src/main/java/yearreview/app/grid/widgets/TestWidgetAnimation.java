@@ -16,11 +16,25 @@ import java.time.Instant;
  * @author ColdStone37
  */
 public class TestWidgetAnimation extends Widget {
-	public Duration ANIMATION_DURATION = Duration.ofMillis(750);
+	/**
+	 * Duration of the animation to play.
+	 */
+	public Duration ANIMATION_DURATION = Duration.ofMillis(1000);
+	/**
+	 * Amount of frames to wait until the next animation should be played.
+	 */
 	public final static int ANIMATION_FRAME_COUNT = 90;
+	/**
+	 * Number of frames already rendered.
+	 */
 	private int frameCount = 0;
-	private List<AnimatedNumber> animations;
-
+	/**
+	 * {@link AnimatedNumber AnimatedNumbers} used to animate the dots.
+	 */
+	private final List<AnimatedNumber> animations;
+	/**
+	 * Font used to annotate the animations.
+	 */
 	private final static Font FONT = new Font("Monospaced", Font.PLAIN, 15);
 
 	/**

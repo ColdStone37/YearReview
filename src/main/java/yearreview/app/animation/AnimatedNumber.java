@@ -160,7 +160,7 @@ public class AnimatedNumber extends Number {
 	}
 
 	/**
-	 * Gets the animation value as an integer. Consider using {@link this#floatValue()} instead since the value is represented as a float internally.
+	 * Gets the animation value as an integer. Consider using {@link AnimatedNumber#floatValue()} instead since the value is represented as a float internally.
 	 * @return integer
 	 */
 	@Override
@@ -169,7 +169,7 @@ public class AnimatedNumber extends Number {
 	}
 
 	/**
-	 * Gets the animation value as a long. Consider using {@link this#floatValue()} instead since the value is represented as a float internally.
+	 * Gets the animation value as a long. Consider using {@link AnimatedNumber#floatValue()} instead since the value is represented as a float internally.
 	 * @return long
 	 */
 	@Override
@@ -187,7 +187,7 @@ public class AnimatedNumber extends Number {
 	}
 
 	/**
-	 * Gets the animation value as a double. Consider using {@link this#floatValue()} instead since the value is represented as a float internally.
+	 * Gets the animation value as a double. Consider using {@link AnimatedNumber#floatValue()} instead since the value is represented as a float internally.
 	 * @return double
 	 */
 	@Override
