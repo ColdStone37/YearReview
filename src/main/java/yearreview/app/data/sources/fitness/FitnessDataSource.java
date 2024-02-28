@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.*;
 
 /**
  * A {@link DataSource} that loads the Fitness Data exported from services like Strava using {@link FitnessAdapter adapters}.
@@ -25,6 +26,7 @@ public class FitnessDataSource extends DataSource {
 	 * Database to store the activities in.
 	 */
 	private FitnessDatabase database;
+	private final static Logger logger = Logger.getLogger(FitnessDataSource.class.getName());
 
 	/**
 	 * Constructs a FitnessDataSource using a configuration.
@@ -42,8 +44,14 @@ public class FitnessDataSource extends DataSource {
 	public void parseConfig(XmlNode config) {
 		adapters = new ArrayList<>();
 		database = new FitnessDatabase();
-		for(XmlNode adapter : config)
-			adapters.add(FitnessAdapter.getAdapter(database, adapter));
+		for(XmlNode adapter : config){
+			FitnessAdapter fa = FitnessAdapter.getAdapter(database, adapter);
+			if(fa == null) {
+				logger.log(Level.WARNING, "Adapter couldn't be initialized, no FitnessAdapter with name \"" + adapter.getName() + "\" was found.");
+			} else {
+				adapters.add(FitnessAdapter.getAdapter(database, adapter));
+			}
+		}
 	}
 
 	/**

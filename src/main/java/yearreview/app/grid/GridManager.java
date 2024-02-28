@@ -6,6 +6,7 @@ import yearreview.app.grid.widgets.WidgetFactory;
 import yearreview.app.util.xml.XmlNode;
 
 import java.util.*;
+import java.util.logging.*;
 
 /**
  * Parses the configuration of the grid and creates the segments with according sizes.
@@ -25,6 +26,8 @@ public class GridManager implements Iterable<Widget> {
 	 * A List of all Widgets managed by this {@link GridManager}.
 	 */
 	private final List<Widget> widgets;
+
+	private final static Logger logger = Logger.getLogger(GridManager.class.getName());
 
 	/**
 	 * Constructs a {@link GridManager} from a given configuration.
@@ -51,7 +54,7 @@ public class GridManager implements Iterable<Widget> {
 			// Add the widget
 			Widget newWidget = WidgetFactory.getWidget(wPos.x, wPos.y, wPos.w, wPos.h, widgetConfig);
 			if (newWidget == null)
-				throw new Error("Widget " + widgetConfig.getName() + " isn't valid.");
+				logger.log(Level.WARNING, "Widget couldn't be initialized, no Widget with name \"" + widgetConfig.getName() + "\" exists.");
 			widgets.add(newWidget);
 		}
 	}

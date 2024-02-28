@@ -4,6 +4,7 @@ import yearreview.app.data.sources.DataSource;
 import yearreview.app.util.xml.XmlNode;
 
 import java.util.*;
+import java.util.logging.*;
 
 /**
  * Manages all {@link DataSource} by creating them from a given configuration and loading them.
@@ -15,6 +16,7 @@ public class DataManager {
 	 * List of DataSources loaded from the configuration.
 	 */
 	private final List<DataSource> sources;
+	private final static Logger logger = Logger.getLogger(DataManager.class.getName());
 
 	/**
 	 * Creates a DataManager from a given configuration.
@@ -25,9 +27,11 @@ public class DataManager {
 		sources = new ArrayList<>();
 		for (XmlNode sourceConfig : dataConfig) {
 			DataSource newSource = DataSource.getDataSource(sourceConfig);
-			if (newSource == null)
-				throw new Error("Data Source " + sourceConfig.getName() + " isn't valid.");
-			sources.add(newSource);
+			if (newSource == null) {
+				logger.log(Level.WARNING, "DataSource couldn't be initialized, no DataSource with name \"" + sourceConfig.getName() + "\" exists.");
+			} else {
+				sources.add(newSource);
+			}
 		}
 	}
 
@@ -47,6 +51,8 @@ public class DataManager {
 	 * Loads the data of all {@link DataSource DataSources} on multiple Threads.
 	 */
 	public void loadData() {
+		logger.log(Level.INFO, "Started loading DataSources.");
+
 		// Start all loading threads
 		for (DataSource source : sources)
 			source.start();
@@ -56,7 +62,10 @@ public class DataManager {
 			for (DataSource source : sources)
 				source.join();
 		} catch (InterruptedException e) {
-			throw new Error("Atleast one of the DataSources failed to load.");
+			logger.log(Level.SEVERE, "InterruptedException during loading of DataSources.", e);
+			System.exit(1);
 		}
+
+		logger.log(Level.INFO, "Finished loading DataSources.");
 	}
 }

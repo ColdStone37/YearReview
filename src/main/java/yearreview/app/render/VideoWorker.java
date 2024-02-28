@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.*;
+import java.util.logging.*;
 
 /**
  * A class that pipes the generated images from the {@link Renderer} into an ffmpeg-subprocess to render the video.
@@ -21,6 +22,7 @@ public class VideoWorker {
 	 * Stream used to input raw frames into ffmpeg.
 	 */
 	private final OutputStream ffmpegInput;
+	private final static Logger logger = Logger.getLogger(VideoWorker.class.getName());
 
 	/**
 	 * Default Constructor for a VideoWorker that starts the ffmpeg-subprocess.
@@ -32,7 +34,8 @@ public class VideoWorker {
 			ffmpeg = rt.exec(cmd);
 			ffmpegInput = ffmpeg.getOutputStream();
 		} catch (IOException e) {
-			throw new Error("Could not create ffmpeg process. Are you sure that ffmpeg is installed?");
+			logger.log(Level.SEVERE, "Couldn't create ffmpeg-process. Make sure you have added ffmpeg to PATH.", e);
+			throw new Error(e);
 		}
 	}
 
@@ -47,7 +50,8 @@ public class VideoWorker {
 			DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
 			ffmpegInput.write(data.getData());
 		} catch (IOException e) {
-			throw new Error("IOException whilst piping image to ffmpeg.");
+			logger.log(Level.SEVERE, "Couldn't write frame to ffmpeg.", e);
+			throw new Error(e);
 		}
 	}
 
@@ -59,7 +63,7 @@ public class VideoWorker {
 			ffmpegInput.flush();
 			ffmpegInput.close();
 		} catch (IOException e) {
-			throw new Error("IOException whilst closing stream.");
+			logger.log(Level.WARNING, "Couldn't close OutputStream to ffmpeg.", e);
 		}
 	}
 }

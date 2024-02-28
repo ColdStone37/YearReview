@@ -8,6 +8,7 @@ import yearreview.app.grid.widgets.Widget;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.Instant;
+import java.util.logging.*;
 
 /**
  * A class that manages the renderprocess by generating the frames and passing them to a {@link VideoWorker}.
@@ -36,6 +37,7 @@ public class Renderer {
 	 * The {@link GridManager} used to get the {@link Widget widgets}.
 	 */
 	private final GridManager grid;
+	private final static Logger logger = Logger.getLogger(Renderer.class.getName());
 
 	/**
 	 * Default Constructor for a Renderer.
@@ -56,11 +58,13 @@ public class Renderer {
 	 */
 	public void renderVideo() {
 		VideoWorker v = new VideoWorker();
+		logger.log(Level.INFO, "Started rendering video.");
 		for (int i = 0; i < 500; i++) {
 			renderFrame(i);
 			v.writeFrame(renderingSurface);
 			AnimationManager.updateAnimations(1000 / GlobalSettings.getVideoFramerate());
 		}
+		logger.log(Level.INFO, "Finished rendering video.");
 		v.end();
 	}
 
