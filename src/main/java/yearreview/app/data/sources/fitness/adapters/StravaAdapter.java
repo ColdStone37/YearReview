@@ -16,10 +16,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.*;
 
 /**
  * An adapter to input the data that can be exported from Strava <a href="https://www.strava.com/athlete/delete_your_account">here</a>.
@@ -35,6 +33,8 @@ public class StravaAdapter extends FitnessAdapter {
 	 * Index of the language of the data. (currently only supports german)
 	 */
 	private final int language;
+
+	private final static Logger logger = Logger.getLogger(StravaAdapter.class.getName());
 
 	/**
 	 * Map to convert the shorthand of the language to the index.
@@ -123,7 +123,7 @@ public class StravaAdapter extends FitnessAdapter {
 						// try to parse it
 						database.insertActivity(new Activity(activityName, type, startActivity, duration, distance, GPX.read(activityPath)));
 					} catch (IOException e) {
-						System.out.println("Couldn't load .gpx-file " + activityPath);
+						logger.log(Level.WARNING, "Couldn't load .gpx-file \"" + activityPath + "\".");
 						database.insertActivity(new Activity(activityName, type, startActivity, duration, distance));
 					}
 				} else {

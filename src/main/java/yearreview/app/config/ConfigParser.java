@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.time.Instant;
+import java.util.logging.*;
 
 import yearreview.app.util.xml.XmlNode;
 
@@ -29,6 +30,7 @@ public class ConfigParser {
 	 * Configuration for the data sources.
 	 */
 	private XmlNode dataSources;
+	private final static Logger logger = Logger.getLogger(ConfigParser.class.getName());
 
 	/**
 	 * Constructs a ConfigParser and parses the arguments and config file.
@@ -59,19 +61,21 @@ public class ConfigParser {
 			// Delete the video file if it already exists and the -d flag is set
 			if (cmd.hasOption("delete") && f.isFile())
 				if(!f.delete())
-					throw new Error("Unable to delete File " + f);
+					logger.log(Level.WARNING, "Unable to delete file \"" + f.getAbsolutePath() + "\".");
 
 			// ffmpeg doesn't like it when the file already exists
-			if (f.isFile())
-				throw new Error("Output file does already exists. Either change output name or add -d flag to automatically delete it.");
+			if (f.isFile()){
+				logger.log(Level.SEVERE, "ffmpeg-process cannot be created if the output-file \"" + f.getAbsolutePath() + "\" does already exist.");
+				System.exit(1);
+			}
 
 			// Parse the Config file
 			parseConfigFile(cmd.getOptionValue("config"));
 		} catch (ParseException e) {
 			// If the arguments couldn't be parsed throw Error and show help
-			System.out.println(e.getMessage());
+			logger.log(Level.SEVERE, "Passed arguments couldn't be parsed.", e);
 			formatter.printHelp("set the configuration file with the -c option, all other arguments are optional", options);
-			System.exit(1);
+			throw new Error(e);
 		}
 	}
 
@@ -113,7 +117,7 @@ public class ConfigParser {
 
 			// Test for correct version
 			if (!root.getAttributeByName("version").equals(XML_VERSION))
-				throw new Error("XML-version does not match project version.");
+				logger.log(Level.WARNING, "Configuration-Version does not match project-version.");
 
 			// Make sure the needed Children exist
 			root.assertChildNodesExist("Settings", "DataSources", "Widgets");
@@ -125,6 +129,7 @@ public class ConfigParser {
 
 			parseSettings(settings);
 		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Configuration couldn't be parsed.");
 			throw new Error(e);
 		}
 	}

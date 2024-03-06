@@ -1,12 +1,15 @@
 package yearreview.app.data.sources;
 
 import yearreview.app.config.GlobalSettings;
+import yearreview.app.data.DataManager;
 import yearreview.app.data.sources.audio.AudioDataSource;
 import yearreview.app.data.sources.fitness.FitnessDataSource;
 import yearreview.app.util.xml.XmlNode;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A Datasource loads data from paths specified in the configuration.
@@ -19,13 +22,17 @@ public abstract class DataSource extends Thread {
 	 * Tag of the source. Might be used to specify dependencies.
 	 */
 	public final String tag;
+	protected final static Logger logger = Logger.getLogger(DataSource.class.getName());
 
 	/**
 	 * Constructs a DataSource from a configuration.
 	 * @param c configuration of the DataSource
 	 */
 	public DataSource(XmlNode c) {
-		tag = c.getAttributeByName("tag");
+		String t = c.getAttributeByName("tag");
+		if(t == null)
+			t = c.getName();
+		tag = t;
 		parseConfig(c);
 	}
 
@@ -36,9 +43,11 @@ public abstract class DataSource extends Thread {
 	@Override
 	public void run() {
 		try {
+			logger.fine("Loading of DataSource \"" + tag + "\" started.");
 			loadData(GlobalSettings.getStartTime(), GlobalSettings.getEndTime());
+			logger.fine("Loading of DataSource \"" + tag + "\" finished.");
 		} catch(IOException e){
-			throw new Error("Couldn't load DataSource: " + e);
+			logger.log(Level.WARNING, "IOException while loading DataSource \"" + tag + "\".", e);
 		}
 	}
 
