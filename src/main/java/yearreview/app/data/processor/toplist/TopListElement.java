@@ -21,7 +21,7 @@ public class TopListElement {
 	/**
 	 * Identifier of the element. Unique over all TopListElements.
 	 */
-	private final int id;
+	public final int id;
 	/**
 	 * Item to display information from.
 	 */

@@ -51,7 +51,11 @@ public abstract class GlobalSettings {
 	/**
 	 * Background of the video. (Default: {@link Color#BLACK})
 	 */
-	private static Color backgroundColor = Color.BLACK;
+	private static Color backgroundColor = new Color(17, 29, 19);
+
+	private static Color accentColor1 = new Color(65, 93, 67);
+
+	private static Color accentColor2 = new Color(112, 151, 117);
 
 	/**
 	 * Radius of the corners of the {@link yearreview.app.grid.widgets.Widget widgets}. (Default: 10f)
@@ -374,6 +378,14 @@ public abstract class GlobalSettings {
 	 */
 	public static Color getBackgroundColor() {
 		return backgroundColor;
+	}
+
+	public static Color getAccentColor1() {
+		return accentColor1;
+	}
+
+	public static Color getAccentColor2() {
+		return accentColor2;
 	}
 
 	/**

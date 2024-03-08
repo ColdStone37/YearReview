@@ -1,5 +1,7 @@
-package yearreview.app.grid.widgets;
+package yearreview.app.grid.widgets.test;
 
+import yearreview.app.config.GlobalSettings;
+import yearreview.app.grid.widgets.Widget;
 import yearreview.app.util.xml.XmlNode;
 
 import java.awt.*;
@@ -32,7 +34,7 @@ public class TestWidget extends Widget {
 	 */
 	@Override
 	protected void renderLocalSpace(Graphics2D graphic, Instant time) {
-		graphic.setColor(Color.BLUE);
+		graphic.setColor(GlobalSettings.getAccentColor1());
 		graphic.fillRect(0, 0, (int) w, (int) h);
 	}
 }

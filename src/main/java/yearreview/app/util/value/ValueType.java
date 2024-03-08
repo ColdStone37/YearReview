@@ -8,5 +8,18 @@ package yearreview.app.util.value;
 public enum ValueType {
 	DISTANCE,
 	DURATION,
-	COUNTER
+	COUNTER;
+
+	public static ValueType getTypeByName(String name) {
+		switch(name){
+			case "Distance":
+				return DISTANCE;
+			case "Duration":
+				return DURATION;
+			case "Counter":
+				return COUNTER;
+			default:
+				return null;
+		}
+	}
 }

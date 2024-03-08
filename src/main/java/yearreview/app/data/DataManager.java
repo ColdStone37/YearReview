@@ -20,6 +20,7 @@ public class DataManager {
 
 	private final Map<String, DataProcessor> processors;
 	private final static Logger logger = Logger.getLogger(DataManager.class.getName());
+	private boolean isLoaded = false;
 
 	/**
 	 * Creates a DataManager from a given configuration.
@@ -106,5 +107,11 @@ public class DataManager {
 			processor.init(this);
 
 		logger.log(Level.INFO, "Finished loading DataSources.");
+
+		isLoaded = true;
+	}
+
+	public boolean isLoaded(){
+		return isLoaded;
 	}
 }

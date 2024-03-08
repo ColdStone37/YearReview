@@ -1,7 +1,9 @@
-package yearreview.app.grid.widgets;
+package yearreview.app.grid.widgets.test;
 
 import yearreview.app.animation.AnimatedNumber;
 import yearreview.app.animation.AnimationCurve;
+import yearreview.app.config.GlobalSettings;
+import yearreview.app.grid.widgets.Widget;
 import yearreview.app.util.xml.XmlNode;
 
 import java.awt.*;
@@ -75,7 +77,7 @@ public class TestWidgetAnimation extends Widget {
 		}
 
 		// Background
-		g.setColor(Color.BLUE);
+		g.setColor(GlobalSettings.getAccentColor1());
 		g.fillRect(0, 0, (int) w, (int) h);
 
 		// Render dots

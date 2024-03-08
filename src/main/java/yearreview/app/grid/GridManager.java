@@ -1,6 +1,7 @@
 package yearreview.app.grid;
 
 import yearreview.app.config.GlobalSettings;
+import yearreview.app.data.DataManager;
 import yearreview.app.grid.widgets.Widget;
 import yearreview.app.grid.widgets.WidgetFactory;
 import yearreview.app.util.xml.XmlNode;
@@ -34,7 +35,9 @@ public class GridManager implements Iterable<Widget> {
 	 *
 	 * @param gridConfig configuration of the grid
 	 */
-	public GridManager(XmlNode gridConfig) {
+	public GridManager(XmlNode gridConfig, DataManager dataManager) {
+		assert(dataManager.isLoaded());
+
 		// Calculate scaling values
 		xScale = ((float) GlobalSettings.getRenderWidth() - GlobalSettings.getScaledGridOuterSpacing() * 2f + (float) GlobalSettings.getScaledGridInnerSpacing()) / (float) GlobalSettings.getGridWidth();
 		yScale = ((float) GlobalSettings.getRenderHeight() - GlobalSettings.getScaledGridOuterSpacing() * 2f + (float) GlobalSettings.getScaledGridInnerSpacing()) / (float) GlobalSettings.getGridHeight();
@@ -52,7 +55,7 @@ public class GridManager implements Iterable<Widget> {
 			WidgetPosition wPos = transform(x, y, w, h);
 
 			// Add the widget
-			Widget newWidget = WidgetFactory.getWidget(wPos.x, wPos.y, wPos.w, wPos.h, widgetConfig);
+			Widget newWidget = WidgetFactory.getWidget(wPos.x, wPos.y, wPos.w, wPos.h, widgetConfig, dataManager);
 			if (newWidget == null)
 				logger.log(Level.WARNING, "Widget couldn't be initialized, no Widget with name \"" + widgetConfig.getName() + "\" exists.");
 			widgets.add(newWidget);

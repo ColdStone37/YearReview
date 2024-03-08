@@ -19,6 +19,16 @@ public class AnimatedVector2D {
 
 	/**
 	 * Constructs a new AnimatedVector2D from an initial position.
+	 * @param x initial x-position of the AnimatedVector
+	 * @param y initial y-position of the AnimatedVector
+	 */
+	public AnimatedVector2D(float x, float y) {
+		this.x = new AnimatedNumber(x);
+		this.y = new AnimatedNumber(y);
+	}
+
+	/**
+	 * Constructs a new AnimatedVector2D from an initial position.
 	 * @param initialVector initial position of the AnimatedVector
 	 */
 	public AnimatedVector2D(Vector2D initialVector) {
@@ -38,6 +48,16 @@ public class AnimatedVector2D {
 
 	/**
 	 * Animates the Vector to a new position using the default Duration and Curve.
+	 * @param x new x-position to animate to
+	 * @param y new y-position to animate to
+	 */
+	public void animateTo(float x, float y) {
+		this.x.animateTo(x);
+		this.y.animateTo(y);
+	}
+
+	/**
+	 * Animates the Vector to a new position using the default Duration and Curve.
 	 * @param pos new position to animate to
 	 */
 	public void animateTo(Vector2D pos) {
@@ -53,6 +73,16 @@ public class AnimatedVector2D {
 	public void animateTo(Vector2D pos, Duration d){
 		x.animateTo(pos.x, d);
 		y.animateTo(pos.y, d);
+	}
+
+	/**
+	 * Animates the Vector to a new position.
+	 * @param pos new position to animate to
+	 * @param c Curve to use for the animation
+	 */
+	public void animateTo(Vector2D pos, AnimationCurve c) {
+		x.animateTo(pos.x, c);
+		y.animateTo(pos.y, c);
 	}
 
 	/**

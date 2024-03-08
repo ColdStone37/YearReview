@@ -109,6 +109,15 @@ public class AnimatedNumber extends Number {
 	/**
 	 * Animated the value to a given new value with a certain animation duration and AnimationCurve.
 	 * @param newValue new value to animate to
+	 * @param c curve to use for the animation to the new value (has to be {@link AnimationCurve#isNormalized() normalized})
+	 */
+	public void animateTo(float newValue, AnimationCurve c) {
+		animateTo(newValue, GlobalSettings.getAnimationDuration(), c);
+	}
+
+	/**
+	 * Animated the value to a given new value with a certain animation duration and AnimationCurve.
+	 * @param newValue new value to animate to
 	 * @param d duration of animation to the new value
 	 * @param c curve to use for the animation to the new value (has to be {@link AnimationCurve#isNormalized() normalized})
 	 */
