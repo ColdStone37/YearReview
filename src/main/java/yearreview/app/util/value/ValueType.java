@@ -7,5 +7,6 @@ package yearreview.app.util.value;
  */
 public enum ValueType {
 	DISTANCE,
-	DURATION
+	DURATION,
+	COUNTER
 }

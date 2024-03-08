@@ -124,5 +124,24 @@ public class AudioData implements Comparable<AudioData>, TopListCompatibleItem {
 					return false;
 			}
 		}
+
+		public static Type getTypeByName(String name) {
+			switch(name) {
+				case "Song":
+					return SONG;
+				case "Audiobook":
+					return AUDIOBOOK;
+				case "Episode":
+					return EPISODE;
+				case "Podcast":
+					return PODCAST;
+				case "Album":
+					return ALBUM;
+				case "Artist":
+					return ARTIST;
+				default:
+					return null;
+			}
+		}
 	}
 }

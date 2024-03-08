@@ -2,7 +2,9 @@ package yearreview.app.data.sources.audio.database;
 
 import yearreview.app.data.processor.toplist.TopListAdapter;
 import yearreview.app.data.processor.toplist.TopListElement;
+import yearreview.app.util.value.CounterValue;
 import yearreview.app.util.value.DurationValue;
+import yearreview.app.util.value.Value;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -14,6 +16,12 @@ import java.util.*;
  * @author ColdStone37
  */
 public class AudioTopListAdapter implements TopListAdapter {
+	private final static List<Value> defaultValues = new ArrayList<Value>() {
+		{
+			add(new DurationValue(Duration.ZERO));
+			add(new CounterValue(0));
+		}
+	};
 	/**
 	 * Database to adapt for the TopList.
 	 */
@@ -96,7 +104,7 @@ public class AudioTopListAdapter implements TopListAdapter {
 
 				// Add Duration to the TopListElements
 				for(AudioData d : data)
-					audioMap.computeIfAbsent(d, k -> new TopListElement(d, new DurationValue(Duration.ZERO)))
+					audioMap.computeIfAbsent(d, k -> new TopListElement(d, defaultValues))
 							.addValue(new DurationValue(part));
 
 				// Update the Duration that was already added to not add it again in the next iteration
@@ -105,8 +113,9 @@ public class AudioTopListAdapter implements TopListAdapter {
 			} else {
 				// Add the complete Duration of the event to the TopListElements
 				for(AudioData d : data)
-					audioMap.computeIfAbsent(d, k -> new TopListElement(d, new DurationValue(Duration.ZERO)))
-							.addValue(new DurationValue(currentEvent.duration.minus(currentEventListeningDuration)));
+					audioMap.computeIfAbsent(d, k -> new TopListElement(d, defaultValues))
+							.addValue(new DurationValue(currentEvent.duration.minus(currentEventListeningDuration)))
+							.addValue(new CounterValue(1));
 
 				// Move the iterator to the next position if possible
 				if(eventIterator.hasNext()){

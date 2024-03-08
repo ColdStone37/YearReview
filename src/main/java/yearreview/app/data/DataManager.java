@@ -1,5 +1,6 @@
 package yearreview.app.data;
 
+import yearreview.app.data.processor.DataProcessor;
 import yearreview.app.data.sources.DataSource;
 import yearreview.app.util.xml.XmlNode;
 
@@ -16,13 +17,15 @@ public class DataManager {
 	 * List of DataSources loaded from the configuration.
 	 */
 	private final Map<String, DataSource> sources;
+
+	private final Map<String, DataProcessor> processors;
 	private final static Logger logger = Logger.getLogger(DataManager.class.getName());
 
 	/**
 	 * Creates a DataManager from a given configuration.
 	 * @param dataConfig configuration
 	 */
-	public DataManager(XmlNode dataConfig) {
+	public DataManager(XmlNode dataConfig, XmlNode processorsConfig) {
 		// Initialize the DataSources and throw an Error if the configuration is invalid
 		sources = new TreeMap<>();
 		for (XmlNode sourceConfig : dataConfig) {
@@ -36,6 +39,19 @@ public class DataManager {
 				}
 			}
 		}
+
+		processors = new TreeMap<>();
+		for(XmlNode processorConfig : processorsConfig) {
+			DataProcessor newProcessor = DataProcessor.getDataProcessor(processorConfig);
+			if(newProcessor == null) {
+				logger.log(Level.WARNING, "DataProcessor couldn't be initialized, no DataProcessor with name \"" + processorConfig.getName() + "\" exists.");
+			} else {
+				if(processors.put(newProcessor.tag, newProcessor) != null) {
+					logger.severe("Multiple DataProcessors with the name \"" + newProcessor.tag + "\" found, consider adding a tag to one of them.");
+					System.exit(1);
+				}
+			}
+		}
 	}
 
 	/**
@@ -45,6 +61,10 @@ public class DataManager {
 	 */
 	public DataSource getSourceByTag(String tag) {
 		return sources.get(tag);
+	}
+
+	public DataProcessor getProcessorByTag(String tag) {
+		return processors.get(tag);
 	}
 
 	/**
@@ -65,6 +85,10 @@ public class DataManager {
 			logger.log(Level.SEVERE, "InterruptedException during loading of DataSources.", e);
 			System.exit(1);
 		}
+
+		// Initialize Processors
+		for(DataProcessor processor : processors.values())
+			processor.init(this);
 
 		logger.log(Level.INFO, "Finished loading DataSources.");
 	}

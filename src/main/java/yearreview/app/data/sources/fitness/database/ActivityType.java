@@ -1,4 +1,4 @@
-package yearreview.app.data.sources.fitness.databse;
+package yearreview.app.data.sources.fitness.database;
 
 /**
  * Enum that describes possible {@link Activity Activities} stored in the {@link FitnessDatabase}.

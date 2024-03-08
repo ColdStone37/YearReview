@@ -1,9 +1,10 @@
 package yearreview.app.data.sources.fitness;
 
 import yearreview.app.data.processor.toplist.TopListAdapter;
+import yearreview.app.data.processor.toplist.TopListCompatible;
 import yearreview.app.data.sources.DataSource;
 import yearreview.app.data.sources.fitness.adapters.FitnessAdapter;
-import yearreview.app.data.sources.fitness.databse.*;
+import yearreview.app.data.sources.fitness.database.*;
 import yearreview.app.util.xml.XmlNode;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.util.logging.*;
  *
  * @author ColdStone37
  */
-public class FitnessDataSource extends DataSource {
+public class FitnessDataSource extends DataSource implements TopListCompatible {
 	/**
 	 * List of adapters to use for loading data.
 	 */
@@ -70,7 +71,8 @@ public class FitnessDataSource extends DataSource {
 	 * Gets a TopListAdapter for the Database that allows for creation of TopLists using the {@link yearreview.app.data.processor.toplist.TopListGenerator}.
 	 * @return Adapter to create TopLists from the Database
 	 */
-	public TopListAdapter getTopListAdapter() {
+	@Override
+	public TopListAdapter getTopListAdapter(XmlNode config) {
 		return new FitnessTopListAdapter(database);
 	}
 }

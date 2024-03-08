@@ -1,6 +1,7 @@
 package yearreview.app.data.sources.audio;
 
 import yearreview.app.data.processor.toplist.TopListAdapter;
+import yearreview.app.data.processor.toplist.TopListCompatible;
 import yearreview.app.data.sources.DataSource;
 import yearreview.app.data.sources.audio.adapter.AudioDatabaseAdapter;
 import yearreview.app.data.sources.audio.database.AudioData;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author ColdStone37
  */
-public class AudioDataSource extends DataSource {
+public class AudioDataSource extends DataSource implements TopListCompatible {
     /**
      * Adapters used for loading the listening histories.
      */
@@ -37,7 +38,7 @@ public class AudioDataSource extends DataSource {
     }
 
     /**
-     * Parses the passed configuration, initializes the databse and creates the adapters.
+     * Parses the passed configuration, initializes the database and creates the adapters.
      * @param config configuration to parse
      */
     public void parseConfig(XmlNode config) {
@@ -60,10 +61,11 @@ public class AudioDataSource extends DataSource {
 
     /**
      * Gets the TopListAdapter for the {@link AudioDatabase} that can be used to create a TopList from this {@link DataSource}.
-     * @param type type of data to filter the TopList by
+     * @param config configuration of the TopListAdapter containing which type to {@link AudioData.Type} to filter by
      * @return adapter for the TopList
      */
-    public TopListAdapter getTopListAdapter(AudioData.Type type) {
-        return new AudioTopListAdapter(database, type);
+    @Override
+    public TopListAdapter getTopListAdapter(XmlNode config) {
+        return new AudioTopListAdapter(database, AudioData.Type.getTypeByName(config.getChildContent("Type")));
     }
 }

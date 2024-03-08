@@ -1,4 +1,4 @@
-package yearreview.app.data.sources.fitness.databse;
+package yearreview.app.data.sources.fitness.database;
 
 import java.util.Iterator;
 import java.util.SortedSet;

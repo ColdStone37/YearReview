@@ -1,4 +1,4 @@
-package yearreview.app.data.sources.fitness.databse;
+package yearreview.app.data.sources.fitness.database;
 
 import io.jenetics.jpx.*;
 import io.jenetics.jpx.geom.Geoid;

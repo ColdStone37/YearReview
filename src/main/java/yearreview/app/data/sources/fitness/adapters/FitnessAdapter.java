@@ -1,6 +1,6 @@
 package yearreview.app.data.sources.fitness.adapters;
 
-import yearreview.app.data.sources.fitness.databse.FitnessDatabase;
+import yearreview.app.data.sources.fitness.database.FitnessDatabase;
 import yearreview.app.util.xml.XmlNode;
 
 import java.io.IOException;

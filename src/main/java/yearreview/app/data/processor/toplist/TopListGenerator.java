@@ -1,6 +1,9 @@
 package yearreview.app.data.processor.toplist;
 
+import yearreview.app.data.DataManager;
+import yearreview.app.data.processor.DataProcessor;
 import yearreview.app.util.value.ValueType;
+import yearreview.app.util.xml.XmlNode;
 
 import java.time.Instant;
 import java.util.*;
@@ -10,41 +13,39 @@ import java.util.*;
  *
  * @author ColdStone37
  */
-public class TopListGenerator {
+public class TopListGenerator extends DataProcessor {
 	/**
 	 * Adapter used to get the {@link TopListElement TopListElements} from a {@link yearreview.app.data.sources.DataSource}.
 	 */
-	private final TopListAdapter adapter;
-	/**
-	 * Length of the TopList to generate.
-	 */
-	private final int topListLength;
+	private TopListAdapter adapter;
 	/**
 	 * Comparator used to sort the {@link TopListElement TopListElements}.
 	 */
-	private final TopListElementComparator comparator;
+	private TopListElementComparator comparator;
 
-	/**
-	 * Constructs a new TopListGenerator from an Adapter and a length.
-	 * @param adapter Adapter to use for getting the data from a {@link yearreview.app.data.sources.DataSource}
-	 * @param topListLength Length of the TopList to generate
-	 * @param sortingValue type of {@link yearreview.app.util.value.Value} to sort by
-	 */
-	public TopListGenerator(TopListAdapter adapter, int topListLength, ValueType sortingValue) {
-		this.adapter = adapter;
-		this.topListLength = topListLength;
-		assert(topListLength > 0);
-		comparator = new TopListElementComparator(sortingValue);
+	public TopListGenerator(XmlNode config) {
+		super(config);
+	}
+
+	public void init(DataManager dm, XmlNode config) {
+		XmlNode input = config.getChildByName("Input");
+		adapter = ((TopListCompatible) dm.getSourceByTag(input.getAttributeByName("name"))).getTopListAdapter(input);
+		comparator = new TopListElementComparator();
 	}
 
 	/**
 	 * Gets a List of {@link TopListElement TopListElements} sorted by their {@link yearreview.app.util.value.Value Values} of at most size {@link TopListGenerator#topListLength}.
 	 * @param t time until which to generate the TopList
+	 * @param length length of the TopList to generate
+	 * @param sortType type of Value to sort by
 	 * @return TopList of the elements
 	 */
-	public List<TopListElement> getTopList(Instant t) {
+	public List<TopListElement> getTopList(Instant t, int length, ValueType sortType) {
 		// Gets the elements from the adapter
 		Collection<TopListElement> elements = adapter.getElements(t);
+
+		// Sets the type of the Value to compare by
+		comparator.setComparisonValueType(sortType);
 
 		// TreeSet can be used for sorting since it is a sorted datastructure
 		TreeSet<TopListElement> sorted = new TreeSet<>(comparator);
@@ -52,7 +53,7 @@ public class TopListGenerator {
 		// Add all elements to the set and remove to small values to save some performance
 		for(TopListElement elem : elements) {
 			sorted.add(elem);
-			if(sorted.size() > topListLength)
+			if(sorted.size() > length)
 				sorted.remove(sorted.first());
 		}
 

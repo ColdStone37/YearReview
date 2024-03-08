@@ -3,9 +3,9 @@ package yearreview.app.data.sources.fitness.adapters;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Length;
 import yearreview.app.config.GlobalSettings;
-import yearreview.app.data.sources.fitness.databse.Activity;
-import yearreview.app.data.sources.fitness.databse.ActivityType;
-import yearreview.app.data.sources.fitness.databse.FitnessDatabase;
+import yearreview.app.data.sources.fitness.database.Activity;
+import yearreview.app.data.sources.fitness.database.ActivityType;
+import yearreview.app.data.sources.fitness.database.FitnessDatabase;
 import yearreview.app.util.csv.CSVReader;
 import yearreview.app.util.xml.XmlNode;
 

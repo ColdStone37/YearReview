@@ -21,7 +21,7 @@ public class ConfigParser {
 	/**
 	 * Version of the configuration.
 	 **/
-	public final static String XML_VERSION = "0.1";
+	public final static String XML_VERSION = "0.2";
 	/**
 	 * Configuration for the widgets.
 	 */
@@ -30,6 +30,10 @@ public class ConfigParser {
 	 * Configuration for the data sources.
 	 */
 	private XmlNode dataSources;
+	/**
+	 * Configuration for the data processors.
+	 */
+	private XmlNode dataProcessors;
 	private final static Logger logger = Logger.getLogger(ConfigParser.class.getName());
 
 	/**
@@ -125,6 +129,7 @@ public class ConfigParser {
 			// Get the children
 			XmlNode settings = root.getChildByName("Settings");
 			dataSources = root.getChildByName("DataSources");
+			dataProcessors = root.getChildByName("Processors");
 			widgets = root.getChildByName("Widgets");
 
 			parseSettings(settings);
@@ -150,6 +155,15 @@ public class ConfigParser {
 	 */
 	public XmlNode getDataSourcesSettings() {
 		return dataSources;
+	}
+
+	/**
+	 * Gets the configuration for the data processors.
+	 *
+	 * @return configuration
+	 */
+	public XmlNode getDataProcessorsSettings() {
+		return dataProcessors;
 	}
 
 	/**

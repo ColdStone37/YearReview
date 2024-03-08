@@ -62,8 +62,9 @@ public class TopListElement {
 	 * Adds a given Value to the internal Value of that type.
 	 * @param value Value to add to internal Value
 	 */
-	public void addValue(Value value) {
+	public TopListElement addValue(Value value) {
 		values.compute(value.getType(), (k, v) -> (v == null) ? null : v.plus(value));
+		return this;
 	}
 
 	/**

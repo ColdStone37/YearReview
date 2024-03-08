@@ -1,9 +1,10 @@
-package yearreview.app.data.sources.fitness.databse;
+package yearreview.app.data.sources.fitness.database;
 
 import io.jenetics.jpx.Length;
 import yearreview.app.data.processor.toplist.TopListAdapter;
 import yearreview.app.data.processor.toplist.TopListElement;
 import yearreview.app.data.processor.toplist.TopListItem;
+import yearreview.app.util.value.CounterValue;
 import yearreview.app.util.value.DistanceValue;
 import yearreview.app.util.value.DurationValue;
 import yearreview.app.util.value.Value;
@@ -97,6 +98,7 @@ public class FitnessTopListAdapter implements TopListAdapter {
 				// Add remaining part of the activity to the TopListElement
 				elem.addValue(new DistanceValue(currentActivity.distance.doubleValue() - currentActivityDistance.doubleValue(), Length.Unit.METER));
 				elem.addValue(new DurationValue(currentActivity.duration.minus(currentActivityDuration)));
+				elem.addValue(new CounterValue(1));
 
 				// Iterate to the next element
 				if(activityIterator.hasNext()){
@@ -122,6 +124,7 @@ public class FitnessTopListAdapter implements TopListAdapter {
 		List<Value> values = new ArrayList<>(2);
 		values.add(new DistanceValue(LENGTH_ZERO));
 		values.add(new DurationValue(Duration.ZERO));
+		values.add(new CounterValue(0));
 		return new TopListElement(new TopListItem(name), values);
 	}
 }
