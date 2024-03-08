@@ -68,6 +68,15 @@ public class TopListElement {
 	}
 
 	/**
+	 * Adds the passed Values to the internal Values matching the same type.
+	 * @param addValues values to add to the internal values
+	 */
+	public void addValues(Value... addValues) {
+		for(Value value : addValues)
+			values.compute(value.getType(), (k, v) -> (v == null) ? null : v.plus(value));
+	}
+
+	/**
 	 * Gets the Value associated to the item with a certain type.
 	 * @param type type of Value to get from the element
 	 * @return associated Value or null if no Value of that type exists

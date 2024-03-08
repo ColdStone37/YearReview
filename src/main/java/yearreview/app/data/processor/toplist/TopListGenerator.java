@@ -34,7 +34,7 @@ public class TopListGenerator extends DataProcessor {
 	}
 
 	/**
-	 * Gets a List of {@link TopListElement TopListElements} sorted by their {@link yearreview.app.util.value.Value Values} of at most size {@link TopListGenerator#topListLength}.
+	 * Gets a List of {@link TopListElement TopListElements} sorted by a specified Value type and with a given length.
 	 * @param t time until which to generate the TopList
 	 * @param length length of the TopList to generate
 	 * @param sortType type of Value to sort by

@@ -19,6 +19,13 @@ import java.util.*;
  * @author ColdStone37
  */
 public class FitnessTopListAdapter implements TopListAdapter {
+	private final static List<Value> defaultValues = new ArrayList<Value>() {
+		{
+			add(new DistanceValue(LENGTH_ZERO));
+			add(new DurationValue(Duration.ZERO));
+			add(new CounterValue(0));
+		}
+	};
 	/**
 	 * Constant that stores a Length of 0 meters since {@link Length} does not provide one.
 	 */
@@ -78,7 +85,7 @@ public class FitnessTopListAdapter implements TopListAdapter {
 			Instant activityEnd = currentActivity.time.plus(currentActivity.duration);
 
 			// Get TopListElement or create new one if needed
-			TopListElement elem = typeMap.computeIfAbsent(type, k -> getNewTopListElement(type.name()));
+			TopListElement elem = typeMap.computeIfAbsent(type, k -> new TopListElement(new TopListItem(type.name()), defaultValues));
 
 			if(activityEnd.isAfter(t)) {
 				// If the end of the activity is after t only add part of the activity to the TopListElement
@@ -113,18 +120,5 @@ public class FitnessTopListAdapter implements TopListAdapter {
 
 		// Return the Collection of TopListElements
 		return typeMap.values();
-	}
-
-	/**
-	 * Constructs a new TopListElement with a given name and Distance and Duration Values.
-	 * @param name name to use for the TopListElement
-	 * @return new TopListElement
-	 */
-	private static TopListElement getNewTopListElement(String name) {
-		List<Value> values = new ArrayList<>(2);
-		values.add(new DistanceValue(LENGTH_ZERO));
-		values.add(new DurationValue(Duration.ZERO));
-		values.add(new CounterValue(0));
-		return new TopListElement(new TopListItem(name), values);
 	}
 }

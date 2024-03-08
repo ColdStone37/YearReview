@@ -55,16 +55,31 @@ public class DataManager {
 	}
 
 	/**
-	 * Gets a DataSource by its tag.
+	 * Gets a DataSource by its tag. If a DataSource with the given tag doesn't exist it will throw a severe warning and quit.
 	 * @param tag tag to search for
-	 * @return the DataSource or null if no DataSource with that tag exists
+	 * @return the DataSource with the given tag
 	 */
 	public DataSource getSourceByTag(String tag) {
-		return sources.get(tag);
+		DataSource ds = sources.get(tag);
+		if(ds == null) {
+			logger.severe("A DataSource with the tag \"" + tag + "\" doesn't exists.");
+			System.exit(1);
+		}
+		return ds;
 	}
 
+	/**
+	 * Gets a DataProcessor by its tag. If a DataProcessor with the given tag doesn't exist it will throw a severe warning and quit.
+	 * @param tag tag to search for
+	 * @return the DataProcessor with the given tag
+	 */
 	public DataProcessor getProcessorByTag(String tag) {
-		return processors.get(tag);
+		DataProcessor dp = processors.get(tag);
+		if(dp == null) {
+			logger.severe("A DataProcessor with the tag \"" + tag + "\" doesn't exists.");
+			System.exit(1);
+		}
+		return dp;
 	}
 
 	/**

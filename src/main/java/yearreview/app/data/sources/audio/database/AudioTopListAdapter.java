@@ -114,8 +114,7 @@ public class AudioTopListAdapter implements TopListAdapter {
 				// Add the complete Duration of the event to the TopListElements
 				for(AudioData d : data)
 					audioMap.computeIfAbsent(d, k -> new TopListElement(d, defaultValues))
-							.addValue(new DurationValue(currentEvent.duration.minus(currentEventListeningDuration)))
-							.addValue(new CounterValue(1));
+							.addValues(new DurationValue(currentEvent.duration.minus(currentEventListeningDuration)), new CounterValue(1));
 
 				// Move the iterator to the next position if possible
 				if(eventIterator.hasNext()){
